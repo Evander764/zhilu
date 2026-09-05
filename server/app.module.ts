@@ -4,11 +4,13 @@ import { PlatformModule } from '@lark-apaas/fullstack-nestjs-core';
 
 import { GlobalExceptionFilter } from './common/filters/exception.filter';
 import { ViewModule } from './modules/view/view.module';
+import { ZhiluModule } from './modules/zhilu/zhilu.module';
 
 @Module({
   imports: [
     // 平台 Module，提供平台能力
     PlatformModule.forRoot(),
+    ZhiluModule,
     // ====== @route-section: business-modules START ======
     // Place all business modules here.Do NOT add fallback modules here.
     // ====== @route-section: business-modules END ======

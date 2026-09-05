@@ -1,19 +1,25 @@
-import { logger } from '@lark-apaas/client-toolkit/logger';
 import { axiosForBackend } from '@lark-apaas/client-toolkit/utils/getAxiosForBackend';
+import type {
+  Graph,
+  NodeDetail,
+  SearchRequest,
+  SearchResult,
+} from '../../../shared/api.interface';
 
-
-// Add more API functions here, use axios instance (`axiosForBackend`) to make requests.
-// 
-// 使用示例：
-// export async function getUserData(userId: string) {
-//   try {
-//     const response = await axiosForBackend({
-//       url: `/api/users/${userId}`,
-//       method: 'GET'
-//     });
-//     return response.data;
-//   } catch (error) {
-//     logger.error('获取用户数据失败', error);
-//     throw error;
-//   }
-// }
+export async function getGraph(): Promise<Graph> {
+  return (await axiosForBackend({ url: '/api/zhilu/graph', method: 'GET' }))
+    .data;
+}
+export async function getNode(id: string): Promise<NodeDetail> {
+  return (
+    await axiosForBackend({
+      url: `/api/zhilu/nodes/${encodeURIComponent(id)}`,
+      method: 'GET',
+    })
+  ).data;
+}
+export async function searchZhihu(data: SearchRequest): Promise<SearchResult> {
+  return (
+    await axiosForBackend({ url: '/api/zhilu/search', method: 'POST', data })
+  ).data;
+}
