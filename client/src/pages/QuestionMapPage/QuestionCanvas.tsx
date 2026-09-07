@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
   Handle,
   Position,
   useReactFlow,
-  useNodesInitialized,
   type Node,
   type NodeProps,
   type Edge,
@@ -83,7 +82,7 @@ function Canvas({
   focusKey,
 }: CanvasProps) {
   const flow = useReactFlow<MapNode>();
-  const initialized = useNodesInitialized();
+  const [ready, setReady] = useState(false);
   const mounted = useRef(false);
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const nodes: MapNode[] = useMemo(
@@ -120,7 +119,7 @@ function Canvas({
     };
   });
   useEffect(() => {
-    if (!initialized) return;
+    if (!ready) return;
     const timer = setTimeout(() => {
       if (!mounted.current) {
         const pos = positions[current];
@@ -145,7 +144,7 @@ function Canvas({
       }
     }, 80);
     return () => clearTimeout(timer);
-  }, [current, focusKey, flow, reduce, positions, initialized]);
+  }, [current, focusKey, flow, reduce, positions, ready]);
   return (
     <ReactFlow
       nodes={nodes}
@@ -156,7 +155,7 @@ function Canvas({
       elementsSelectable={false}
       minZoom={0.3}
       maxZoom={1.4}
-      onInit={() => {}}
+      onInit={() => setReady(true)}
       zoomOnDoubleClick={false}
       aria-label="知乎问题探索图谱"
     >
