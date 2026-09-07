@@ -37,6 +37,8 @@ DB 变更使用官方 `lark-cli apps +db-execute`，显式选择 `dev` 或 `onli
 
 ## 发布与恢复
 
+本次运行版本与公开入口见 [2026-09-07 发布记录](question-map-release.md)，详细检查见 [验收记录](question-map-acceptance.md)。
+
 提交并推送至既有妙搭远端的 `sprint/default`，再创建 release，以 `finished` 和匿名线上回读为准。online 数据不随本地数据自动发布，必须单独检查。
 
 之前可用的运行版本为 `d76980474694d7a8ca7bdcebab75d7c9ee983095`，release `7681874661268933851`。回退本次图谱代码使用 `git revert` 撤销相关提交，再推送并发布；保留数据库的旧 `main` 即可恢复原阅读服务。新问题索引是独立记录，代码回退无需删除数据。
