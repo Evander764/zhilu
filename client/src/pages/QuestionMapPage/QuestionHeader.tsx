@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Bookmark, GitBranch, Search, Share2 } from 'lucide-react';
+import { Bookmark, Search, Share2 } from 'lucide-react';
 interface Props {
   save: () => void;
   share: () => void;
@@ -10,18 +10,32 @@ export default function QuestionHeader({ save, share, openSearch }: Props) {
     <header className="qm-header">
       <Link to="/map" className="qm-brand" aria-label="知路首页">
         <span className="qm-brand-mark">
-          <GitBranch size={22} />
+          <svg
+            viewBox="0 0 36 36"
+            width="32"
+            height="32"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M8 26V15a7 7 0 017-7h13M8 26h13a7 7 0 007-7V8"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            />
+            <circle cx="8" cy="26" r="4" fill="currentColor" />
+            <circle cx="28" cy="8" r="4" fill="currentColor" />
+          </svg>
         </span>
-        知路<span className="qm-brand-caption">从一个问题，走向下一个</span>
+        知路<span className="qm-brand-caption">每个问题，都有下一步。</span>
       </Link>
       <div className="qm-header-actions">
         <button
           className="qm-search-trigger"
-          aria-label="搜索知乎问题"
+          aria-label="搜索问题"
           onClick={() => openSearch(null)}
         >
           <Search size={17} />
-          <span>搜索知乎问题</span>
+          <span>搜索问题</span>
         </button>
         <button className="qm-icon" onClick={save} aria-label="保存当前路径">
           <Bookmark size={18} />

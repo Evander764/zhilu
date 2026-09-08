@@ -1,6 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, Check, GitBranch, List, X } from 'lucide-react';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  Check,
+  CornerDownRight,
+  GitBranch,
+  List,
+  Search,
+  X,
+} from 'lucide-react';
 import { resolveAppUrl } from '@lark-apaas/client-toolkit/utils/resolveAppUrl';
 import {
   getQuestionGraph,
@@ -29,6 +39,7 @@ import QuestionTrail from './QuestionTrail';
 import SharePathDialog from './SharePathDialog';
 import QuestionHeader from './QuestionHeader';
 import './question-map.css';
+import './question-map-forest.css';
 const STORAGE_KEY = 'zhilu-question-map-v2';
 function errorText(error: unknown): string {
   const value = error as {
@@ -68,7 +79,11 @@ export default function QuestionMapPage() {
       | ((old: Exploration | null) => Exploration | null),
   ) {
     const previous = stateRef.current;
-    if (previous && reader.current)
+    if (
+      previous &&
+      reader.current &&
+      reader.current.closest('aside')?.dataset.readerTab !== 'discussion'
+    )
       scrolls.current[previous.path.at(-1)!] = reader.current.scrollTop;
     updateState(next);
   }
@@ -340,6 +355,9 @@ export default function QuestionMapPage() {
   const activeJourney = graph.journeys.find(
     (j) => j.questionIds[0] === state.path[0],
   );
+  const previewSource = [...question.sources].sort(
+    (a, b) => a.excerpt.length - b.excerpt.length,
+  )[0];
   const design =
     process.env.NODE_ENV !== 'production'
       ? new URLSearchParams(location.search).get('design') || 'candidate'
@@ -352,18 +370,27 @@ export default function QuestionMapPage() {
         onClick={(e) => {
           e.preventDefault();
           setReaderOpen(true);
-          document.getElementById('qm-reader')?.focus();
+          requestAnimationFrame(() =>
+            document.getElementById('qm-reader')?.focus(),
+          );
         }}
       >
         跳到回答阅读
       </a>
       <QuestionHeader save={save} share={share} openSearch={openSearch} />
-      <section className="qm-workspace" aria-label="问题探索工作区">
+      <section
+        className={`qm-workspace ${readerOpen ? 'reader-open' : 'reader-closed'}`}
+        aria-label="问题探索工作区"
+      >
         <div className="qm-map-area">
           <div className="qm-map-intro">
-            <span className="qm-eyebrow">问题之间，还有路</span>
-            <h1>{activeJourney?.title || '沿着好奇，继续探索'}</h1>
-            <p>点开一个问题，看看它还能通向哪里。</p>
+            <span className="qm-eyebrow">选择你的出发点</span>
+            <h1>
+              从卡住的地方，
+              <br />
+              接着往下走。
+            </h1>
+            <p>从一个真实的问题开始。</p>
             <div className="qm-journeys" aria-label="精选探索入口">
               {graph.journeys.map((j) => (
                 <button
@@ -371,15 +398,59 @@ export default function QuestionMapPage() {
                   className={j.id === activeJourney?.id ? 'active' : ''}
                   onClick={() => reset(j.questionIds[0])}
                 >
-                  {j.id === 'start'
-                    ? '开始自学'
-                    : j.id === 'verify'
-                      ? '借助 AI'
-                      : '考虑付费'}
-                  <ArrowRight size={13} />
+                  <CornerDownRight size={21} />
+                  <span>
+                    {j.id === 'start'
+                      ? '看懂以后，怎样做出来'
+                      : j.id === 'verify'
+                        ? 'AI 做完以后，怎样检查'
+                        : '报课之前，先想清楚'}
+                    <small>{j.title}</small>
+                  </span>
+                  {j.id === activeJourney?.id && (
+                    <Check size={12} className="qm-journey-check" />
+                  )}
                 </button>
               ))}
             </div>
+            {previewSource && (
+              <div className="qm-preview-source" aria-live="polite">
+                <div>
+                  <span>当前问题 · 一段原话</span>
+                  <BookOpen size={14} />
+                </div>
+                <blockquote>“{previewSource.excerpt}”</blockquote>
+                <p>
+                  {previewSource.author}
+                  <small>内容片段</small>
+                </p>
+                <button onClick={() => setReaderOpen(true)}>
+                  打开导读与来源
+                  <ArrowUpRight size={16} />
+                </button>
+              </div>
+            )}
+            <div className="qm-intro-foot">
+              <button onClick={() => openSearch(null)}>
+                <Search size={15} />
+                没有合适的问题？再找找
+              </button>
+              <p>
+                连线来自编辑整理或检索关联。
+                <br />
+                进入阅读后，可查看理由与来源。
+              </p>
+            </div>
+          </div>
+          <div className="qm-canvas-caption">
+            <span>
+              <i />
+              {activeJourney?.title || '沿着好奇，继续探索'}
+            </span>
+            <button onClick={() => setReaderOpen(!readerOpen)}>
+              {readerOpen ? '收起阅读，查看地图' : '阅读当前问题'}
+              <ArrowUpRight size={14} />
+            </button>
           </div>
           <div className="qm-canvas">
             <QuestionCanvas
@@ -390,6 +461,7 @@ export default function QuestionMapPage() {
               path={state.path}
               onSelect={choose}
               focusKey={focusKey}
+              readerOpen={readerOpen}
             />
           </div>
           <div className="qm-map-bottom">

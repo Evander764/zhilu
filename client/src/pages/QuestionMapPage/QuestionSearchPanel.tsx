@@ -25,7 +25,7 @@ export default function QuestionSearchPanel({
     <section className="qm-search-panel" aria-label="搜索发现">
       <div className="qm-panel-heading">
         <div>
-          <h2>{searchContext ? '从当前问题继续找' : '搜索知乎问题'}</h2>
+          <h2>{searchContext ? '从当前问题继续找' : '搜索问题'}</h2>
           <p>发现新问题，再加入你的探索。</p>
         </div>
         <button
@@ -73,7 +73,7 @@ export default function QuestionSearchPanel({
               <small>{q.sources[0]?.author} · 搜索片段</small>
               <div>
                 <a href={q.url} target="_blank" rel="noopener noreferrer">
-                  知乎原问题
+                  原问题
                   <ExternalLink size={12} />
                 </a>
                 <button onClick={() => addDiscovery(q)}>

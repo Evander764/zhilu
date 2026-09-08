@@ -21,6 +21,7 @@ import type {
 } from '../../../../shared/api.interface';
 import { parsePath } from '../../../../shared/path';
 import './zhilu.css';
+import { RoadmapHome } from './RoadmapHome';
 
 const STORAGE_KEY = 'zhilu:path:v1';
 
@@ -239,10 +240,20 @@ export default function ZhiluPage() {
   }
   function keepDialogFocus(event: KeyboardEvent<HTMLDialogElement>) {
     if (event.key !== 'Tab') return;
-    const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], input:not(:disabled), summary, [tabindex="0"]')).filter(element => element.getClientRects().length > 0);
-    const first = items[0]; const last = items[items.length - 1];
-    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    const items = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>(
+        'button:not(:disabled), a[href], input:not(:disabled), summary, [tabindex="0"]',
+      ),
+    ).filter((element) => element.getClientRects().length > 0);
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
+    }
   }
 
   function clearSaved() {
@@ -256,7 +267,7 @@ export default function ZhiluPage() {
   }
 
   return (
-    <div className="zhilu-app">
+    <div className={`zhilu-app ${current ? 'is-reading' : 'is-home'}`}>
       <a href="#main" className="skip-link">
         跳到主要内容
       </a>
@@ -266,13 +277,22 @@ export default function ZhiluPage() {
           onClick={() => go([])}
           aria-label="知路，回到起点"
         >
-          <span className="brand-symbol" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
+          <svg
+            className="brand-symbol"
+            viewBox="0 0 36 36"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M8 26V15a7 7 0 017-7h13M8 26h13a7 7 0 007-7V8"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            />
+            <circle cx="8" cy="26" r="4" fill="currentColor" />
+            <circle cx="28" cy="8" r="4" fill="currentColor" />
+          </svg>
           <strong>知路</strong>
-          <span className="brand-tagline">从一个回答，找到下一步</span>
+          <span className="brand-tagline">每个问题，都有下一步。</span>
         </button>
         <nav aria-label="主导航">
           <button onClick={() => setOverlay('map')}>
@@ -427,137 +447,13 @@ export default function ZhiluPage() {
                 这条分享路径不完整或已失效。可以从下面重新选择；原有资料仍可阅读。
               </div>
             )}
-            <section className="home-hero">
-              <div className="hero-copy">
-                <p className="eyebrow">
-                  <span className="blue-dot" />
-                  AI 时代的技能学习
-                </p>
-                <h1>
-                  别停在
-                  <br />
-                  <span>「看懂了」。</span>
-                </h1>
-                <p className="hero-description">
-                  教程很多，下一步却不总是清楚。
-                  <br />
-                  从已发布的经验出发，找到你现在能接着做的事。
-                </p>
-                <button
-                  className="primary-action"
-                  onClick={() => go(['practice'])}
-                >
-                  从我的卡点出发 <ArrowRight size={18} />
-                </button>
-                {savedPath.length > 0 && (
-                  <button
-                    className="resume-action"
-                    onClick={() => go(savedPath)}
-                  >
-                    继续上次的路径{' '}
-                    <span>
-                      {
-                        graph.nodes.find(
-                          (node) => node.id === savedPath[savedPath.length - 1],
-                        )?.stage
-                      }
-                    </span>
-                    <ArrowRight size={14} />
-                  </button>
-                )}
-              </div>
-              <div className="hero-path">
-                <p className="path-caption">一段回答，可以接着往下走</p>
-                <div className="path-quotation">
-                  <span>从读懂一个建议开始</span>
-                  <p>
-                    “
-                    {
-                      graph.sources.find((source) => source.id === 's-0-1')
-                        ?.excerpt
-                    }
-                    ”
-                  </p>
-                  <small>
-                    {
-                      graph.sources.find((source) => source.id === 's-0-1')
-                        ?.author
-                    }{' '}
-                    · 知乎回答片段
-                  </small>
-                </div>
-                <button
-                  className="path-stop first"
-                  onClick={() => go(['practice'])}
-                >
-                  <span className="route-dot" />
-                  <span>
-                    <small>开始练习</small>教程看懂了，自己却做不出来
-                  </span>
-                  <ArrowUpRight size={18} />
-                </button>
-                <div className="path-bridge">动手后，发现结果不对</div>
-                <button
-                  className="path-stop"
-                  onClick={() => go(['practice', 'debug'])}
-                >
-                  <span className="route-dot" />
-                  <span>
-                    <small>发现问题</small>先分清预期和实际
-                  </span>
-                  <ArrowUpRight size={18} />
-                </button>
-                <div className="path-bridge">能描述了，再找具体反馈</div>
-                <button
-                  className="path-stop"
-                  onClick={() => go(['practice', 'debug', 'feedback'])}
-                >
-                  <span className="route-dot" />
-                  <span>
-                    <small>获得反馈</small>这次和上次，哪里不一样？
-                  </span>
-                  <ArrowUpRight size={18} />
-                </button>
-                <p className="path-footnote">
-                  每一段连接，都能查看理由与来源。
-                </p>
-              </div>
-            </section>
-            <section className="entry-section" aria-labelledby="entry-title">
-              <div className="section-intro">
-                <p className="eyebrow">选一个现在的问题</p>
-                <h2 id="entry-title">
-                  不用从头学，
-                  <br />
-                  从卡住的地方开始。
-                </h2>
-                <p>三条入口，沿途可以换方向。</p>
-              </div>
-              <div className="entry-list">
-                {graph.journeys.map((journey) => (
-                  <button
-                    key={journey.id}
-                    onClick={() => go([journey.nodeIds[0]])}
-                  >
-                    <span>
-                      <strong>{journey.title}</strong>
-                      <small>{journey.description}</small>
-                    </span>
-                    <ArrowUpRight size={25} />
-                  </button>
-                ))}
-              </div>
-            </section>
-            <section className="bottom-search">
-              <Search size={24} />
-              <div>
-                <h2>已经有一个具体问题？</h2>
-                <p>在知乎已发布的内容里，再找一个方向。</p>
-              </div>
-              <button className="outline-action" onClick={openSearch}>
-                去搜索 <ArrowRight size={17} />
-              </button>
-            </section>
+            <RoadmapHome
+              graph={graph}
+              savedPath={savedPath}
+              onRead={go}
+              onMap={() => setOverlay('map')}
+              onSearch={openSearch}
+            />
           </>
         )}
         {notice && (

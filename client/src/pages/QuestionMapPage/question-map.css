@@ -1,11 +1,11 @@
 .qm-app {
-  --qm-ink: #202d42;
-  --qm-muted: #64748b;
-  --qm-blue: #245ad6;
-  --qm-line: #dde4ed;
+  --qm-ink: #263c2e;
+  --qm-muted: #6b8474;
+  --qm-blue: #45b56b;
+  --qm-line: #e0eae3;
   color: var(--qm-ink);
   font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
-  background: #f7f9fc;
+  background: #f8fbf9;
   height: 100dvh;
   min-height: 540px;
   display: flex;
@@ -35,7 +35,7 @@
 }
 .qm-app button:focus-visible,
 .qm-app a:focus-visible {
-  outline: 3px solid #7ba6f1;
+  outline: 3px solid #91dbaa;
   outline-offset: 4px;
 }
 .qm-app button svg,
@@ -89,8 +89,8 @@
   align-items: center;
   gap: 10px;
   color: var(--qm-muted);
-  background: #f5f7fa;
-  border: 1px solid #e8ecf1;
+  background: #f6f9f7;
+  border: 1px solid #eaefec;
   padding: 9px 18px;
   border-radius: 7px;
   width: 230px;
@@ -106,7 +106,7 @@
 }
 .qm-share {
   background: #fff;
-  border: 1px solid #d2ddeb;
+  border: 1px solid #d7e6dc;
   border-radius: 6px;
   display: flex;
   gap: 8px;
@@ -125,7 +125,7 @@
   flex: 1;
   min-width: 0;
   overflow: hidden;
-  background: radial-gradient(ellipse at 35% 50%, #fff 0, #f7f9fc 65%);
+  background: radial-gradient(ellipse at 35% 50%, #fff 0, #f8fbf9 65%);
 }
 .qm-map-intro {
   position: absolute;
@@ -137,7 +137,7 @@
 .qm-eyebrow {
   font-size: 11px;
   letter-spacing: 1.8px;
-  color: #718097;
+  color: #789080;
   font-weight: 500;
 }
 .qm-map-intro h1 {
@@ -167,15 +167,15 @@
   border-radius: 5px;
   background: transparent;
   font-size: 12px;
-  color: #60708a;
+  color: #688271;
 }
 .qm-journeys button.active {
-  background: #eaf0fc;
-  border-color: #dae5f8;
-  color: #245ad6;
+  background: #edf9f1;
+  border-color: #e0f2e6;
+  color: #45b56b;
 }
 .qm-journeys button:hover {
-  background: #edf2f9;
+  background: #eff7f2;
 }
 .qm-canvas {
   position: absolute;
@@ -184,23 +184,23 @@
 .qm-node {
   width: 248px;
   background: #fff;
-  border: 1px solid #d5deea;
+  border: 1px solid #d9e6dd;
   border-radius: 9px;
-  box-shadow: 0 3px 12px #263c5910;
+  box-shadow: 0 3px 12px #2f503a10;
   position: relative;
   transition:
     border-color 0.18s,
     box-shadow 0.18s;
 }
 .qm-node:hover {
-  border-color: #91a9ca;
-  box-shadow: 0 6px 22px #24426813;
+  border-color: #9cbfa8;
+  box-shadow: 0 6px 22px #315b3f13;
 }
 .qm-node.is-current {
-  border-color: #245ad6;
+  border-color: #45b56b;
   box-shadow:
-    0 0 0 4px #245ad610,
-    0 8px 26px #24426814;
+    0 0 0 4px #45b56b10,
+    0 8px 26px #315b3f14;
 }
 .qm-node.is-current:before {
   content: '';
@@ -210,7 +210,7 @@
   bottom: 27px;
   width: 3px;
   border-radius: 3px;
-  background: #245ad6;
+  background: #45b56b;
 }
 .qm-node-button {
   background: none;
@@ -227,7 +227,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: #77869a;
+  color: #7d9485;
   letter-spacing: 0.6px;
   font-size: 10px;
   line-height: 18px;
@@ -235,14 +235,14 @@
 .qm-node-dot {
   width: 5px;
   height: 5px;
-  background: #b9c6d7;
+  background: #bfd1c5;
   border-radius: 50%;
 }
 .is-current .qm-node-meta {
-  color: #245ad6;
+  color: #45b56b;
 }
 .is-current .qm-node-dot {
-  background: #245ad6;
+  background: #45b56b;
 }
 .qm-node-title {
   display: -webkit-box;
@@ -256,33 +256,33 @@
   min-height: 54px;
 }
 .qm-node-foot {
-  border-top: 1px solid #edf0f5;
+  border-top: 1px solid #eef4f0;
   padding-top: 9px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 10px;
-  color: #7c899b;
+  color: #829588;
   gap: 12px;
 }
 .qm-node.is-current .qm-node-foot svg {
-  color: #245ad6;
+  color: #45b56b;
 }
 .qm-app .react-flow__handle {
   width: 5px;
   height: 5px;
-  background: #b3c2d8;
+  background: #bad1c2;
   border: 1px solid #fff;
   min-width: 5px;
   min-height: 5px;
 }
 .qm-app .is-current .react-flow__handle {
-  background: #245ad6;
+  background: #45b56b;
 }
 .qm-app .react-flow__attribution {
   font-size: 9px;
   background: transparent;
-  color: #8290a1;
+  color: #889b8e;
   right: 12px;
 }
 .qm-zoom {
@@ -293,11 +293,11 @@
   display: flex;
   gap: 3px;
   align-items: center;
-  border: 1px solid #dce4ee;
+  border: 1px solid #dfebe3;
   background: #fff;
   border-radius: 7px;
   padding: 4px;
-  box-shadow: 0 2px 7px #2b456609;
+  box-shadow: 0 2px 7px #365b4309;
 }
 .qm-zoom button {
   display: grid;
@@ -306,16 +306,16 @@
   background: none;
   width: 33px;
   height: 32px;
-  color: #61738e;
+  color: #698673;
   border-radius: 4px;
 }
 .qm-zoom button:hover {
-  background: #edf2f9;
+  background: #eff7f2;
 }
 .qm-zoom > span {
   height: 18px;
   width: 1px;
-  background: #e1e7ef;
+  background: #e4ece7;
   margin: 0 3px;
 }
 .qm-map-bottom {
@@ -334,7 +334,7 @@
   align-items: center;
   gap: 18px;
   font-size: 10px;
-  color: #6d7d94;
+  color: #748d7d;
 }
 .qm-legend span {
   display: flex;
@@ -344,7 +344,7 @@
 .qm-legend i {
   display: block;
   width: 22px;
-  border-top: 1.5px solid #93a9c9;
+  border-top: 1.5px solid #9dbfa9;
 }
 .qm-legend i.dashed {
   border-top-style: dashed;
@@ -353,7 +353,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #526883;
+  color: #5b7a66;
   background: none;
   border: 0;
   font-size: 11px !important;
@@ -373,7 +373,7 @@
   overscroll-behavior: contain;
   padding: 27px 27px 32px;
   scrollbar-width: thin;
-  scrollbar-color: #dce3ed transparent;
+  scrollbar-color: #dfeae3 transparent;
 }
 .qm-reader-top {
   display: flex;
@@ -385,7 +385,7 @@
   display: flex;
   gap: 5px;
   align-items: center;
-  color: #72829a;
+  color: #799382;
   font-size: 10px;
 }
 .qm-reader h2 {
@@ -409,34 +409,34 @@
   align-items: center;
   justify-content: center;
   color: #fff !important;
-  background: #245ad6;
-  border: 1px solid #245ad6;
+  background: #45b56b;
+  border: 1px solid #45b56b;
   padding: 10px 16px;
   border-radius: 6px;
   font-size: 13px !important;
   font-weight: 500;
 }
 .qm-primary:hover {
-  background: #194abe;
+  background: #389f5b;
 }
 .qm-collapse {
-  color: #77869a;
+  color: #7d9485;
   background: none;
   border: 0;
   padding: 7px 0;
   font-size: 11px !important;
 }
 .qm-connection {
-  border: 1px solid #dfe7f4;
+  border: 1px solid #e3f0e7;
   border-radius: 7px;
-  background: #f7f9fe;
+  background: #f8fdfa;
   padding: 12px 14px;
   margin: 0 0 28px;
 }
 .qm-connection summary {
   font-size: 11px;
   cursor: pointer;
-  color: #455f83;
+  color: #50785e;
 }
 .qm-connection > summary {
   display: flex;
@@ -445,21 +445,21 @@
   align-items: center;
 }
 .qm-connection > summary span {
-  color: #7a8fac;
+  color: #83a38e;
   font-size: 10px;
 }
 .qm-connection p {
   font-size: 12px;
-  color: #586c89;
+  color: #61806c;
   line-height: 1.9;
   margin: 10px 0 4px;
 }
 .qm-connection small {
   font-size: 10px;
-  color: #7a89a0;
+  color: #819989;
 }
 .qm-connection-item + .qm-connection-item {
-  border-top: 1px solid #e1e8f2;
+  border-top: 1px solid #e4efe8;
   margin-top: 12px;
   padding-top: 2px;
 }
@@ -473,19 +473,19 @@
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid #e8edf3;
+  border-bottom: 1px solid #eaf1ec;
   padding-bottom: 12px;
   margin-bottom: 20px;
 }
 .qm-section-label span {
-  color: #8a96a7;
+  color: #8fa296;
   font-size: 10px;
   font-weight: 400;
 }
 .qm-source {
   padding: 0 0 26px;
   margin-bottom: 25px;
-  border-bottom: 1px solid #e9edf3;
+  border-bottom: 1px solid #ebf1ed;
 }
 .qm-source-author {
   display: flex;
@@ -498,9 +498,9 @@
   height: 30px;
   display: grid;
   place-items: center;
-  background: #edf2f8;
+  background: #eff6f1;
   border-radius: 50%;
-  color: #627b9c;
+  color: #6d9179;
   font-size: 12px;
 }
 .qm-source-author > div {
@@ -513,7 +513,7 @@
 }
 .qm-source-author div > span {
   font-size: 10px;
-  color: #8691a1;
+  color: #8b9c91;
   margin-top: 2px;
 }
 .qm-source > h3 {
@@ -526,12 +526,12 @@
   font-size: 20px;
   line-height: 1.85;
   margin: 0 0 12px;
-  color: #2c3f5b;
+  color: #35523f;
   letter-spacing: 0.2px;
 }
 .qm-scope-label {
   font-size: 10px;
-  color: #929baa;
+  color: #96a69c;
   display: block;
 }
 .qm-guide {
@@ -540,20 +540,20 @@
 .qm-guide h3 {
   font-size: 10px;
   letter-spacing: 1px;
-  color: #7b8a9f;
+  color: #829889;
   margin: 0 0 7px;
   font-weight: 500;
 }
 .qm-guide p {
   font-size: 13px;
-  color: #546278;
+  color: #5b7162;
   line-height: 1.95;
   margin: 0;
 }
 .qm-source-detail {
   margin-top: 15px;
   font-size: 11px;
-  color: #7b889a;
+  color: #819487;
 }
 .qm-source-detail summary {
   cursor: pointer;
@@ -567,7 +567,7 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: #245ad6 !important;
+  color: #45b56b !important;
   font-size: 12px;
   margin-top: 18px;
 }
@@ -583,17 +583,17 @@
   gap: 12px;
   background: none;
   border: 0;
-  border-bottom: 1px solid #eef1f6;
+  border-bottom: 1px solid #eff5f1;
   width: 100%;
   text-align: left;
   padding: 13px 0;
   font-size: 13px;
-  color: #425673;
+  color: #4b6a56;
 }
 .qm-next small {
   display: block;
   font-size: 10px;
-  color: #8b97a8;
+  color: #90a397;
   margin-top: 5px;
 }
 .qm-more-search {
@@ -602,17 +602,17 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  background: #f5f7fb;
-  border: 1px solid #e7ecf4;
+  background: #f6faf7;
+  border: 1px solid #e9f2ec;
   padding: 12px;
   border-radius: 6px;
   margin-top: 24px;
-  color: #5c7190;
+  color: #668671;
   font-size: 11px !important;
 }
 .qm-reader-footer {
   font-size: 10px;
-  color: #909cac;
+  color: #95a79b;
   line-height: 1.9;
   margin-top: 27px;
 }
@@ -637,7 +637,7 @@
   display: flex;
   gap: 4px;
   align-items: center;
-  border-right: 1px solid #e2e7ef;
+  border-right: 1px solid #e4ede7;
   padding-right: 12px;
 }
 .qm-trail-controls button {
@@ -647,11 +647,11 @@
   height: 30px;
   background: none;
   border: 0;
-  color: #667c99;
+  color: #6f907a;
 }
 .qm-trail-label {
   font-size: 10px;
-  color: #7f8da1;
+  color: #859b8d;
   white-space: nowrap;
 }
 .qm-trail nav {
@@ -670,7 +670,7 @@
   align-items: center;
   gap: 8px;
   white-space: nowrap;
-  color: #76859a;
+  color: #7d9384;
   font-size: 11px;
 }
 .qm-trail nav button span {
@@ -679,11 +679,11 @@
   text-overflow: ellipsis;
 }
 .qm-trail nav button[aria-current] {
-  color: #245ad6;
+  color: #45b56b;
 }
 .qm-local {
   font-size: 10px;
-  color: #8b97a7;
+  color: #90a296;
 }
 .qm-list {
   position: absolute;
@@ -693,11 +693,11 @@
   width: 330px;
   max-height: 65%;
   overflow: auto;
-  border: 1px solid #dbe4ef;
+  border: 1px solid #dfebe3;
   border-radius: 9px;
   background: #fff;
   padding: 16px;
-  box-shadow: 0 12px 40px #2539551c;
+  box-shadow: 0 12px 40px #2e4c381c;
 }
 .qm-panel-heading {
   display: flex;
@@ -712,13 +712,13 @@
 }
 .qm-panel-heading p {
   font-size: 12px;
-  color: #8090a6;
+  color: #879f8f;
   margin: 7px 0 0;
 }
 .qm-panel-heading > button {
   background: none;
   border: 0;
-  color: #75869f;
+  color: #7d9786;
   padding: 5px;
   display: grid;
   place-items: center;
@@ -726,7 +726,7 @@
 .qm-list > button {
   background: none;
   border: 0;
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid #eef4f0;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -734,16 +734,16 @@
   padding: 13px 0;
   text-align: left;
   font-size: 13px;
-  color: #596b83;
+  color: #617b6a;
 }
 .qm-list > button[aria-current='true'] {
-  color: #245ad6;
+  color: #45b56b;
 }
 .qm-list-dot {
   height: 5px;
   width: 5px;
   border-radius: 50%;
-  background: #bdc9d9;
+  background: #c2d4c8;
   flex-shrink: 0;
   margin: 0 5px;
 }
@@ -754,21 +754,21 @@
   left: 50%;
   transform: translateX(-50%);
   max-width: min(600px, 90vw);
-  border: 1px solid #d3dfef;
+  border: 1px solid #d8eade;
   border-radius: 8px;
   padding: 12px 15px;
   background: #fff;
-  box-shadow: 0 8px 32px #1939611c;
+  box-shadow: 0 8px 32px #2654361c;
   display: flex;
   align-items: center;
   gap: 16px;
-  color: #4d6585;
+  color: #577b63;
   font-size: 12px;
 }
 .qm-notice button {
   background: none;
   border: 0;
-  color: #7890ae;
+  color: #82a48e;
   padding: 4px;
   display: flex;
 }
@@ -782,9 +782,9 @@
   display: flex;
   flex-direction: column;
   background: #fff;
-  border: 1px solid #dce4ef;
+  border: 1px solid #e0ebe4;
   border-radius: 12px;
-  box-shadow: 0 16px 70px #233c6024;
+  box-shadow: 0 16px 70px #2e553b24;
   padding: 24px;
 }
 .qm-search-panel form {
@@ -808,13 +808,13 @@
 .qm-search-hint,
 .qm-search-results > p {
   font-size: 12px;
-  color: #7889a0;
+  color: #7f9988;
   line-height: 1.9;
   margin: 10px 0;
 }
 .qm-search-results article {
   padding: 18px 0;
-  border-bottom: 1px solid #e7edf5;
+  border-bottom: 1px solid #eaf2ed;
 }
 .qm-search-results h3 {
   font-size: 16px;
@@ -824,13 +824,13 @@
 }
 .qm-search-results article p {
   font-size: 12px;
-  color: #6b7d94;
+  color: #738c7b;
   line-height: 1.8;
   margin: 0 0 9px;
 }
 .qm-search-results article small {
   font-size: 10px;
-  color: #8290a4;
+  color: #889e90;
 }
 .qm-search-results article > div {
   display: flex;
@@ -844,11 +844,11 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #245ad6;
+  color: #45b56b;
   font-size: 12px;
 }
 .qm-search-results article button {
-  background: #eff4fd;
+  background: #f2faf5;
   border: 0;
   border-radius: 5px;
   padding: 7px 10px;
@@ -857,7 +857,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #245ad6;
+  color: #45b56b;
   font-size: 13px;
 }
 .qm-mobile-reader-toggle {
@@ -870,7 +870,7 @@
   z-index: 100;
   background: #fff;
   padding: 15px;
-  color: #245ad6;
+  color: #45b56b;
 }
 .qm-skip:focus {
   top: 12px;
@@ -883,8 +883,8 @@
   align-items: center;
   justify-content: center;
   gap: 18px;
-  background: #f7f9fc;
-  color: #52739e;
+  background: #f8fbf9;
+  color: #609070;
   font-size: 14px;
 }
 .qm-error h1 {
@@ -894,30 +894,30 @@
 .qm-error a {
   padding: 9px 16px;
   background: #fff;
-  border: 1px solid #c5d4e8;
+  border: 1px solid #cbe2d3;
   border-radius: 5px;
-  color: #245ad6;
+  color: #45b56b;
 }
 .qm-design-baseline .qm-node {
   box-shadow: none;
   border-radius: 2px;
 }
 .qm-design-baseline .qm-node.is-current {
-  border-color: #8a9aad;
+  border-color: #90a798;
 }
 .qm-design-baseline .qm-node:before {
   display: none;
 }
 .qm-design-baseline .qm-node.is-current .qm-node-meta {
-  color: #64748b;
+  color: #6b8474;
 }
 .qm-design-overload .qm-node {
-  background: #e0ebff;
-  box-shadow: 8px 9px 0 #bfd0f1;
-  border: 3px solid #739bdd;
+  background: #e6f9ec;
+  box-shadow: 8px 9px 0 #c8e8d3;
+  border: 3px solid #87c99d;
 }
 .qm-design-overload .qm-node-title {
-  color: #1648b1;
+  color: #339454;
   font-weight: 800;
 }
 .qm-design-overload .react-flow__edge-path {
@@ -1057,9 +1057,9 @@
     width: 100%;
     height: 46px;
     border-left: 0;
-    border-top: 1px solid #dce5f0;
+    border-top: 1px solid #e0ece4;
     border-radius: 14px 14px 0 0;
-    box-shadow: 0 -5px 22px #263e5b0c;
+    box-shadow: 0 -5px 22px #30513b0c;
     overflow: hidden;
     transition: height 0.22s;
   }
@@ -1073,7 +1073,7 @@
     gap: 15px;
     padding: 12px 20px;
     background: #fff;
-    color: #40618d;
+    color: #4e7f5f;
     border: 0;
     width: 100%;
     font-size: 12px !important;
