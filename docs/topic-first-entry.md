@@ -1,6 +1,6 @@
 # 先选题，再检索
 
-2026-09-08，本地交互候选，未发布。
+2026-09-08，待线上发布。网站只使用线上托管入口交付，不再以本地预览作为验收。
 
 入口顺序：不同方向的选题 → 用户选择 → 服务端调用知乎 CLI → 搜索结果 → 用户选择一条回答 → 阅读与后续探索。
 
@@ -12,7 +12,7 @@
 
 ZhiluService 默认调用 searchWithCli。用 execFile 和参数数组运行 search zhihu；不通过 shell。12 秒 CLI 等待、15 秒进程上限、2 MiB 输出上限；退出码、业务码及返回结构都要检查。额度函数、五分钟缓存、来源 URL 清洗及结果索引沿用现有实现。相同缓存查询可以不再次启动 CLI。
 
-ZHIHU_CLI_PATH 可指定部署主机上的绝对可执行路径。本机使用官方 Skill 确认的 macOS 安装路径；Linux 默认 /usr/local/bin/zhihu-cli。凭据由进程环境或 CLI 系统凭据库取得，不传入前端与命令参数。缺少程序时明确失败。只有显式设置 ZHILU_SEARCH_TRANSPORT=http 才使用旧 HTTP 兼容路径，不静默降级。
+ZHIHU_CLI_PATH 可指定部署主机上的绝对可执行路径。本机使用官方 Skill 确认的 macOS 安装路径；Linux 默认读取发布包的 bin/zhihu-cli。正式 build 在平台完成原有构建后，按 scripts/zhilu/cli-release.json 固定官方版本及 SHA-256，下载对应 CPU 的 Linux CLI，检查大小、哈希、归档唯一成员、ELF 架构与可执行版本，再打进服务端发布包。凭据由进程环境或 CLI 系统凭据库取得，不传入前端与命令参数。缺少程序时明确失败。只有显式设置 ZHILU_SEARCH_TRANSPORT=http 才使用旧 HTTP 兼容路径，不静默降级。
 
 上线前还需在实际部署主机安装并校验官方 Linux CLI，确认可执行路径、凭据和真实请求；本机调用通过不代表托管环境已具备 CLI。此次没有新建发布，也没有改线上权限。
 

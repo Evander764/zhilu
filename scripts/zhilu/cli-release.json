@@ -1,0 +1,16 @@
+{
+  "version": "0.5.0",
+  "manifestUrl": "https://developer-cdn.zhihu.com/zhihu-cli/releases/stable/manifest.json",
+  "artifacts": {
+    "linux-amd64": {
+      "url": "https://developer-cdn.zhihu.com/zhihu-cli/releases/stable/cli/0.5.0/zhihu-cli-0.5.0-linux-amd64.tar.gz",
+      "sha256": "b68fb4f3caf487c0c55388595748adde6cba69f3b21c0558d8e8429bb0570f2a",
+      "size": 2986798
+    },
+    "linux-arm64": {
+      "url": "https://developer-cdn.zhihu.com/zhihu-cli/releases/stable/cli/0.5.0/zhihu-cli-0.5.0-linux-arm64.tar.gz",
+      "sha256": "35f4aaa838a755c3da28c348ab8604db4b0d6cb4810caf5993f4937e30fc988f",
+      "size": 2760182
+    }
+  }
+}

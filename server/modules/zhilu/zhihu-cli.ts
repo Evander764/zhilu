@@ -15,7 +15,7 @@ export function cliPath(): string {
           homedir(),
           'Library/Application Support/zhihu-cli/current/zhihu-cli',
         )
-      : '/usr/local/bin/zhihu-cli')
+      : join(process.cwd(), 'bin', 'zhihu-cli'))
   );
 }
 export function cliAvailable(): boolean {
