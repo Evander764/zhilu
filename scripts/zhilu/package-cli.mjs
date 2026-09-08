@@ -31,8 +31,8 @@ try {
   await chmod(executable, 0o755);
   const native = platform === `${process.platform}-${arch}`;
   if (native) {
-    const version = execFileSync(executable, ['--version'], { encoding: 'utf8', timeout: 5000 }).trim();
-    if (!version.includes(release.version)) throw new Error('CLI version mismatch');
+    const version = execFileSync(executable, ['version'], { encoding: 'utf8', timeout: 5000 }).trim();
+    if (JSON.parse(version).version !== release.version) throw new Error('CLI version mismatch');
   }
   await writeFile(join(destination, 'release.json'), JSON.stringify({ version: release.version, platform, archiveSha256: artifact.sha256, binarySha256: createHash('sha256').update(binary).digest('hex'), executableVerified: native }) + '\n');
   console.log(`Packaged official zhihu-cli ${release.version} (${platform}); checksum verified; executable check: ${native ? 'passed' : 'deferred to Linux deployment'}`);
