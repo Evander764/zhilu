@@ -1,6 +1,6 @@
 # 先选题，再检索
 
-2026-09-08，待线上发布。网站只使用线上托管入口交付，不再以本地预览作为验收。
+2026-09-08，已线上发布。网站只使用线上托管入口交付；见 [线上发布与验收](topic-first-release-20260908.md)。
 
 入口顺序：不同方向的选题 → 用户选择 → 服务端调用知乎 CLI → 搜索结果 → 用户选择一条回答 → 阅读与后续探索。
 
@@ -14,7 +14,7 @@ ZhiluService 默认调用 searchWithCli。用 execFile 和参数数组运行 sea
 
 ZHIHU_CLI_PATH 可指定部署主机上的绝对可执行路径。本机使用官方 Skill 确认的 macOS 安装路径；Linux 默认读取发布包的 bin/zhihu-cli。正式 build 在平台完成原有构建后，按 scripts/zhilu/cli-release.json 固定官方版本及 SHA-256，下载对应 CPU 的 Linux CLI，检查大小、哈希、归档唯一成员、ELF 架构与可执行版本，再打进服务端发布包。凭据由进程环境或 CLI 系统凭据库取得，不传入前端与命令参数。缺少程序时明确失败。只有显式设置 ZHILU_SEARCH_TRANSPORT=http 才使用旧 HTTP 兼容路径，不静默降级。
 
-上线前还需在实际部署主机安装并校验官方 Linux CLI，确认可执行路径、凭据和真实请求；本机调用通过不代表托管环境已具备 CLI。此次没有新建发布，也没有改线上权限。
+正式发布已在托管环境执行官方 Linux CLI，匿名搜索及线上调用日志验证通过。未更改线上访问权限。
 
 ## 反馈闭环
 
@@ -25,7 +25,7 @@ ZHIHU_CLI_PATH 可指定部署主机上的绝对可执行路径。本机使用�
 - analogous_scope: 搜索失败、零结果、旧请求迟到、恢复阅读。
 - prevention_asset: shared/topics.ts、TopicHome 请求序号、shared/graph-state.ts 的 startFromSearch；test/unit/question-graph.spec.ts、test/unit/zhihu-cli.spec.ts。
 - verification: 浏览器首次加载零 API 请求、六方向零展开；真实选择返回五个问题；阅读单节点零连线；390px 与 1440px 无横向溢出。单元测试覆盖不能自动展开、命令字面传参、程序缺失、超时、限流和额度耗尽。
-- remaining_risk: 选题文案和新首页的用户验收仍待确认；托管 CLI 安装及线上发布尚未做。
+- remaining_risk: 选题文案和新首页的用户验收仍待确认；线上浏览器复验因用户接管暂停。
 
 本轮保留绿色和宋体标题的视觉方向，调整入口的信息结构。主要动作从“展开既有内容”改为“选择感兴趣的方向”，细节与来源留在返回结果之后。桌面和手机截图在仓库外 deliverables/zhilu-topic-first/。
 
