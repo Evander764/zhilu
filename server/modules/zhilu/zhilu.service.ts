@@ -22,6 +22,7 @@ import {
   type SearchResult,
 } from '../../../shared/api.interface';
 import { normalizeItems, searchInput, upstreamSchema } from './search-utils';
+import { cliAvailable, searchWithCli } from './zhihu-cli';
 
 @Injectable()
 export class ZhiluService {
@@ -39,7 +40,9 @@ export class ZhiluService {
   searchEnabled(): boolean {
     return (
       process.env.ZHILU_SEARCH_ENABLED !== 'false' &&
-      Boolean(process.env.ZHIHU_ACCESS_SECRET)
+      (process.env.ZHILU_SEARCH_TRANSPORT === 'http'
+        ? Boolean(process.env.ZHIHU_ACCESS_SECRET)
+        : cliAvailable())
     );
   }
 
@@ -108,9 +111,7 @@ export class ZhiluService {
     if (!parsed.success)
       throw new BadRequestException('请输入 2—120 个字符的问题。');
     if (!this.searchEnabled())
-      throw new ServiceUnavailableException(
-        '实时搜索暂未开放，精选路径仍可阅读。',
-      );
+      throw new ServiceUnavailableException('实时搜索暂不可用，请稍后重试。');
     const { query, nodeId } = parsed.data;
     const context = nodeId ? (await this.node(nodeId)).node.stage : '';
     const combined = `${query} ${context}`.trim();
@@ -120,18 +121,21 @@ export class ZhiluService {
       return { ...cached.value, cached: true };
     try {
       await this.reserveRequest();
-      const response = await this.http.axiosRef.get<unknown>(
-        'https://developer.zhihu.com/api/v1/content/zhihu_search',
-        {
-          params: { Query: combined, Count: 10 },
-          timeout: 12000,
-          maxRedirects: 0,
-          headers: {
-            Authorization: `Bearer ${process.env.ZHIHU_ACCESS_SECRET}`,
-            'X-Request-Timestamp': String(Math.floor(Date.now() / 1000)),
-          },
-        },
-      );
+      const response =
+        process.env.ZHILU_SEARCH_TRANSPORT === 'http'
+          ? await this.http.axiosRef.get<unknown>(
+              'https://developer.zhihu.com/api/v1/content/zhihu_search',
+              {
+                params: { Query: combined, Count: 10 },
+                timeout: 12000,
+                maxRedirects: 0,
+                headers: {
+                  Authorization: `Bearer ${process.env.ZHIHU_ACCESS_SECRET}`,
+                  'X-Request-Timestamp': String(Math.floor(Date.now() / 1000)),
+                },
+              },
+            )
+          : { data: await searchWithCli(combined) };
       const parsedResponse = upstreamSchema.safeParse(response.data);
       if (!parsedResponse.success)
         throw new ServiceUnavailableException('搜索返回格式异常，请稍后重试。');

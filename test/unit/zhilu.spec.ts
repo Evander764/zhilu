@@ -89,6 +89,7 @@ describe('upstream failure isolation and budget', () => {
   const env = { ...process.env };
   beforeEach(() => {
     process.env.ZHIHU_ACCESS_SECRET = 'unit-test-only';
+    process.env.ZHILU_SEARCH_TRANSPORT = 'http';
     delete process.env.ZHILU_SEARCH_ENABLED;
   });
   afterEach(() => {

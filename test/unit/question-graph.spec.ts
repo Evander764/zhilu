@@ -12,6 +12,7 @@ import {
   restoreShare,
   selectQuestion,
   startExploration,
+  startFromSearch,
   toShare,
 } from '../../shared/graph-state';
 import { QuestionGraphService } from '../../server/modules/zhilu/question-graph.service';
@@ -206,4 +207,18 @@ describe('search index and upstream isolation', () => {
     });
     expect(search).not.toHaveBeenCalled();
   });
+});
+
+describe('topic-first entry', () => {
+  test.each(['1', '3'])(
+    'a chosen search result %s starts alone even with existing curated edges',
+    (id) => {
+      const next = startFromSearch(question(id));
+      expect(next.visible).toEqual([id]);
+      expect(next.path).toEqual([id]);
+      expect(next.links).toEqual([]);
+      expect(next.expanded).toEqual([]);
+      expect(startExploration(graph, id).visible.length).toBeGreaterThan(1);
+    },
+  );
 });

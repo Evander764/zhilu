@@ -78,6 +78,18 @@ export function addBranch(
   }
   return next;
 }
+// A selected search result starts alone; suggested topics are never graph nodes.
+export function startFromSearch(question: PublicQuestion): Exploration {
+  return {
+    questions: [question],
+    links: [],
+    visible: [question.id],
+    expanded: [],
+    positions: { [question.id]: { x: 0, y: 180 } },
+    path: [question.id],
+    scrolls: {},
+  };
+}
 export function startExploration(
   graph: QuestionGraph,
   root: string,

@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  ArrowRight,
   ArrowUpRight,
   BookOpen,
   Check,
-  CornerDownRight,
   GitBranch,
   List,
   Search,
@@ -25,6 +23,7 @@ import {
   restoreShare,
   selectQuestion,
   startExploration,
+  startFromSearch,
   toShare,
   type Exploration,
 } from '../../../../shared/graph-state';
@@ -38,6 +37,7 @@ import QuestionSearchPanel from './QuestionSearchPanel';
 import QuestionTrail from './QuestionTrail';
 import SharePathDialog from './SharePathDialog';
 import QuestionHeader from './QuestionHeader';
+import TopicHome from './TopicHome';
 import './question-map.css';
 import './question-map-forest.css';
 const STORAGE_KEY = 'zhilu-question-map-v2';
@@ -54,6 +54,32 @@ function errorText(error: unknown): string {
 export default function QuestionMapPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [selected, setSelected] = useState<PublicQuestion | null>(null);
+  const [shared, setShared] = useState(
+    () =>
+      new URLSearchParams(location.hash.slice(1)).has('graph') ||
+      new URLSearchParams(location.search).has('journey'),
+  );
+  function home() {
+    setSelected(null);
+    setShared(false);
+    navigate('/map', { replace: true });
+  }
+  return selected || shared ? (
+    <ReadingMapPage initialQuestion={selected} onHome={home} />
+  ) : (
+    <TopicHome onChoose={setSelected} onResume={() => setShared(true)} />
+  );
+}
+function ReadingMapPage({
+  initialQuestion,
+  onHome,
+}: {
+  initialQuestion: PublicQuestion | null;
+  onHome: () => void;
+}) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [graph, setGraph] = useState<QuestionGraph | null>(null);
   const [state, updateState] = useState<Exploration | null>(null);
   const [notice, setNotice] = useState('');
@@ -64,7 +90,7 @@ export default function QuestionMapPage() {
   const [searchContext, setSearchContext] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [listOpen, setListOpen] = useState(false);
-  const [readerOpen, setReaderOpen] = useState(false);
+  const [readerOpen, setReaderOpen] = useState(Boolean(initialQuestion));
   const [shareUrl, setShareUrl] = useState('');
   const [focusKey, setFocusKey] = useState(0);
   const reader = useRef<HTMLDivElement>(null);
@@ -96,7 +122,9 @@ export default function QuestionMapPage() {
         const data = await getQuestionGraph();
         if (cancelled) return;
         setGraph(data);
-        let next = startExploration(data, data.journeys[0].questionIds[0]);
+        let next = initialQuestion
+          ? startFromSearch(initialQuestion)
+          : startExploration(data, data.journeys[0].questionIds[0]);
         const journey = new URLSearchParams(location.search).get('journey');
         const raw = new URLSearchParams(location.hash.slice(1)).get('graph');
         if (raw) {
@@ -122,7 +150,7 @@ export default function QuestionMapPage() {
           const chosen = data.journeys.find((j) => j.id === journey);
           if (chosen) next = startExploration(data, chosen.questionIds[0]);
           else setNotice('这条示范路径不存在，已回到精选起点。');
-        } else {
+        } else if (!initialQuestion) {
           try {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
@@ -154,7 +182,7 @@ export default function QuestionMapPage() {
       cancelled = true;
       requestNumber.current++;
     };
-  }, [location.search, location.hash, navigate]);
+  }, [location.search, location.hash, navigate, initialQuestion]);
   useEffect(() => {
     if (!state) return;
     try {
@@ -186,25 +214,14 @@ export default function QuestionMapPage() {
     return () => window.removeEventListener('pagehide', persist);
   }, []);
   const choose = useCallback((id: string) => {
+    requestNumber.current++;
+    setBusy(false);
     setState((s) => (s ? selectQuestion(s, id) : s));
     setReaderOpen(true);
     setResults(null);
     setSearchOpen(false);
     setListOpen(false);
   }, []);
-  function reset(root: string) {
-    if (!graph) return;
-    requestNumber.current++;
-    setBusy(false);
-    setState(startExploration(graph, root));
-    scrolls.current = {};
-    if (reader.current) reader.current.scrollTop = 0;
-    setFocusKey((k) => k + 1);
-    setResults(null);
-    setSearchOpen(false);
-    setReaderOpen(false);
-    setNotice('已从这个问题重新出发。');
-  }
   function curatedExpand() {
     if (!state || !graph || !question) return;
     const links = graph.links.filter((l) => l.fromId === current).slice(0, 5);
@@ -223,6 +240,8 @@ export default function QuestionMapPage() {
     } else openSearch(current);
   }
   function openSearch(context: string | null) {
+    requestNumber.current++;
+    setBusy(false);
     setSearchContext(context);
     setQuery(
       context
@@ -241,6 +260,7 @@ export default function QuestionMapPage() {
     }
     const number = ++requestNumber.current;
     setBusy(true);
+    setResults(null);
     setNotice('');
     try {
       const result = searchContext
@@ -377,7 +397,12 @@ export default function QuestionMapPage() {
       >
         跳到回答阅读
       </a>
-      <QuestionHeader save={save} share={share} openSearch={openSearch} />
+      <QuestionHeader
+        save={save}
+        share={share}
+        openSearch={openSearch}
+        onHome={onHome}
+      />
       <section
         className={`qm-workspace ${readerOpen ? 'reader-open' : 'reader-closed'}`}
         aria-label="问题探索工作区"
@@ -391,28 +416,9 @@ export default function QuestionMapPage() {
               接着往下走。
             </h1>
             <p>从一个真实的问题开始。</p>
-            <div className="qm-journeys" aria-label="精选探索入口">
-              {graph.journeys.map((j) => (
-                <button
-                  key={j.id}
-                  className={j.id === activeJourney?.id ? 'active' : ''}
-                  onClick={() => reset(j.questionIds[0])}
-                >
-                  <CornerDownRight size={21} />
-                  <span>
-                    {j.id === 'start'
-                      ? '看懂以后，怎样做出来'
-                      : j.id === 'verify'
-                        ? 'AI 做完以后，怎样检查'
-                        : '报课之前，先想清楚'}
-                    <small>{j.title}</small>
-                  </span>
-                  {j.id === activeJourney?.id && (
-                    <Check size={12} className="qm-journey-check" />
-                  )}
-                </button>
-              ))}
-            </div>
+            <button className="qm-primary" onClick={onHome}>
+              重新选择选题
+            </button>
             {previewSource && (
               <div className="qm-preview-source" aria-live="polite">
                 <div>

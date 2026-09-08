@@ -1,14 +1,19 @@
-import { Link } from 'react-router-dom';
 import { Bookmark, Search, Share2 } from 'lucide-react';
 interface Props {
+  onHome: () => void;
   save: () => void;
   share: () => void;
   openSearch: (id: string | null) => void;
 }
-export default function QuestionHeader({ save, share, openSearch }: Props) {
+export default function QuestionHeader({
+  save,
+  share,
+  openSearch,
+  onHome,
+}: Props) {
   return (
     <header className="qm-header">
-      <Link to="/map" className="qm-brand" aria-label="知路首页">
+      <button onClick={onHome} className="qm-brand" aria-label="知路首页">
         <span className="qm-brand-mark">
           <svg
             viewBox="0 0 36 36"
@@ -27,7 +32,7 @@ export default function QuestionHeader({ save, share, openSearch }: Props) {
           </svg>
         </span>
         知路<span className="qm-brand-caption">每个问题，都有下一步。</span>
-      </Link>
+      </button>
       <div className="qm-header-actions">
         <button
           className="qm-search-trigger"
