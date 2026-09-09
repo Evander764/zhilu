@@ -1,4 +1,12 @@
 import { z } from 'zod';
+export type {
+  DemoAccount,
+  DemoActivity,
+  DemoActivityKind,
+  DemoPreferences,
+  DemoProfileInput,
+  DemoArticle,
+} from './zhihu-demo';
 
 export const sourceSchema = z.object({
   id: z.string(),

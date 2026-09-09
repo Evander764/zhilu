@@ -1,5 +1,47 @@
 import { axiosForBackend } from '@lark-apaas/client-toolkit/utils/getAxiosForBackend';
 import type {
+  DemoAccount,
+  DemoActivityKind,
+  DemoProfileInput,
+} from '../../../shared/api.interface';
+
+async function demoRequest<T>(
+  path: string,
+  method = 'GET',
+  data?: unknown,
+): Promise<T> {
+  try {
+    const response = await axiosForBackend({
+      url: `/api/zhihu-demo/${path}`,
+      method,
+      data,
+    });
+    if (response.status >= 400)
+      throw new Error(
+        response.status === 401 ? '请先登录，再进行操作' : '操作未保存，请重试',
+      );
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error && !('response' in error)) throw error;
+    throw new Error('无法连接到账号服务，请检查网络后重试');
+  }
+}
+export const getDemoAccount = () => demoRequest<DemoAccount | null>('me');
+export const saveDemoProfile = (data: DemoProfileInput) =>
+  demoRequest<DemoAccount>('me/profile', 'PUT', data);
+export const setDemoActivity = (
+  kind: DemoActivityKind,
+  id: string,
+  enabled: boolean,
+) =>
+  demoRequest<{ saved: boolean }>(
+    `me/activity/${kind}/${encodeURIComponent(id)}`,
+    enabled ? 'PUT' : 'DELETE',
+  );
+export const clearDemoHistory = () =>
+  demoRequest<{ cleared: boolean }>('me/history', 'DELETE');
+export const exportDemoAccount = () => demoRequest<DemoAccount>('me/export');
+import type {
   QuestionGraph,
   PublicQuestion,
   QuestionSearchResult,

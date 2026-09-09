@@ -1,23 +1,22 @@
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ZhiluPage from './pages/ZhiluPage/ZhiluPage';
 import QuestionMapPage from './pages/QuestionMapPage/QuestionMapPage';
-
-function HomePage() {
-  const location = useLocation();
-  return new URLSearchParams(location.search).has('p') ? (
-    <ZhiluPage />
-  ) : (
-    <QuestionMapPage />
-  );
-}
+import ZhihuDemoPage from './pages/ZhihuDemoPage/ZhihuDemoPage';
 
 const RoutesComponent = () => {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<ZhihuDemoPage />} />
+      <Route path="/question/:id" element={<ZhihuDemoPage />} />
+      <Route
+        path="/question/:id/answer/:answerId"
+        element={<ZhihuDemoPage />}
+      />
+      <Route path="/settings" element={<ZhihuDemoPage />} />
+      <Route path="/settings/:section" element={<ZhihuDemoPage />} />
       <Route path="/map" element={<QuestionMapPage />} />
       <Route path="/read" element={<ZhiluPage />} />
-      <Route path="*" element={<HomePage />} />
+      <Route path="*" element={<ZhihuDemoPage />} />
     </Routes>
   );
 };

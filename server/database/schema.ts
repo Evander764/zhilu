@@ -117,6 +117,41 @@ export const fileAttachmentArray = customType<{
   },
 });
 
+export const zhihuDemoActivity = pgTable("zhihu_demo_activity", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ownerId: varchar("owner_id", { length: 80 }).notNull(),
+  kind: varchar("kind", { length: 20 }).notNull(),
+  targetId: varchar("target_id", { length: 80 }).notNull(),
+  // System field: Creation time (auto-filled, do not modify)
+  createdAt: customTimestamptz("_created_at", { precision: 6 }).notNull().default(sql`CURRENT_TIMESTAMP`),
+  // System field: Creator (auto-filled, do not modify)
+  createdBy: userProfile("_created_by"),
+  // System field: Update time (auto-filled, do not modify)
+  updatedAt: customTimestamptz("_updated_at", { precision: 6 }).notNull().default(sql`CURRENT_TIMESTAMP`),
+  // System field: Updater (auto-filled, do not modify)
+  updatedBy: userProfile("_updated_by"),
+}, (table) => [
+  uniqueIndex("zhihu_demo_activity_owner_id_kind_target_id_key").on(table.ownerId, table.kind, table.targetId),
+]);
+
+export const zhihuDemoProfiles = pgTable("zhihu_demo_profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ownerId: varchar("owner_id", { length: 80 }).notNull().unique(),
+  displayName: varchar("display_name", { length: 60 }).notNull(),
+  bio: varchar("bio", { length: 160 }).notNull(),
+  preferences: text("preferences").notNull().default('{"recordHistory":true,"emailNotifications":false,"compactFeed":false}'),
+  // System field: Creation time (auto-filled, do not modify)
+  createdAt: customTimestamptz("_created_at", { precision: 6 }).notNull().default(sql`CURRENT_TIMESTAMP`),
+  // System field: Creator (auto-filled, do not modify)
+  createdBy: userProfile("_created_by"),
+  // System field: Update time (auto-filled, do not modify)
+  updatedAt: customTimestamptz("_updated_at", { precision: 6 }).notNull().default(sql`CURRENT_TIMESTAMP`),
+  // System field: Updater (auto-filled, do not modify)
+  updatedBy: userProfile("_updated_by"),
+}, (table) => [
+  uniqueIndex("zhihu_demo_profiles_owner_id_key").on(table.ownerId),
+]);
+
 export const zhiluBudget = pgTable("zhilu_budget", {
   id: uuid("id").primaryKey().defaultRandom(),
   bucket: varchar("bucket", { length: 80 }).notNull().unique(),
@@ -150,5 +185,7 @@ export const zhiluCatalog = pgTable("zhilu_catalog", {
 ]);
 
 // table aliases
+export const zhihuDemoActivityTable = zhihuDemoActivity;
+export const zhihuDemoProfilesTable = zhihuDemoProfiles;
 export const zhiluBudgetTable = zhiluBudget;
 export const zhiluCatalogTable = zhiluCatalog;
