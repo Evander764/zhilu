@@ -5,48 +5,28 @@ import { useEffect, useState } from 'react';
 import {
   Link,
   useLocation,
-  useNavigate,
   useParams,
   useSearchParams,
 } from 'react-router-dom';
 import {
   ArrowUp,
-  BarChart3,
-  Bell,
-  BookOpen,
   ChevronDown,
   ChevronRight,
-  CircleHelp,
-  FileText,
   Flame,
   Heart,
-  History,
-  ImagePlus,
   MessageCircle,
   MoreHorizontal,
   Pencil,
   Plus,
-  Search,
-  Settings,
   Share2,
-  Smile,
   Star,
   UserRound,
-  Video,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { authClient } from '@lark-apaas/client-toolkit/auth';
+
 import { resolveAppUrl } from '@lark-apaas/client-toolkit/utils/resolveAppUrl';
-import { UserDisplay } from '../../components/business-ui/user-display';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '../../components/ui/dialog';
-import { Input } from '../../components/ui/input';
-import { clearDemoHistory, setDemoActivity } from '../../api';
+
+import { setDemoActivity } from '../../api';
 import { DEMO_ARTICLES } from '../../../../shared/zhihu-demo';
 import type {
   DemoActivityKind,

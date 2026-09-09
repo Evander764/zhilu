@@ -1,7 +1,6 @@
 import type { ComponentType } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowUp,
   BarChart3,
   BookOpen,
   ChevronDown,
@@ -165,11 +164,7 @@ export function DemoFeed({
           </h3>
           <div className="zd-creator-banner">
             <span>分享经验，也发现新的可能</span>
-            <strong>
-              每一个问题
-              <br />
-              都值得认真回答
-            </strong>
+            <strong>认真回答，分享新知</strong>
             <BookOpen size={58} strokeWidth={1} />
           </div>
           <div className="zd-creator-buttons">

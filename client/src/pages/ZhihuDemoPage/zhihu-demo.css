@@ -280,7 +280,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 8px 20px 10px 52px;
+  padding: 6px 20px 6px 52px;
 }
 .zd-composer-tools > div {
   display: flex;
@@ -465,9 +465,9 @@
   overflow: hidden;
   background: #edf3fc;
   color: #365b8e;
-  padding: 12px 14px;
-  margin: 14px 0 18px;
-  height: 100px;
+  padding: 7px 14px;
+  margin: 14px 0 24px;
+  height: 60px;
 }
 .zd-creator-banner > span {
   font-size: 10px;
@@ -475,14 +475,16 @@
 }
 .zd-creator-banner strong {
   display: block;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.5;
-  margin-top: 3px;
+  margin-top: 0;
 }
 .zd-creator-banner svg {
   position: absolute;
   right: 12px;
-  bottom: 14px;
+  bottom: 8px;
+  width: 42px;
+  height: 42px;
   color: #a3bce0;
   transform: rotate(-12deg);
 }
