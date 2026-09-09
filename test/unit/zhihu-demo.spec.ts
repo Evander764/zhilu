@@ -45,8 +45,10 @@ describe('Zhihu demo account boundary', () => {
       '9223372036854775806',
     );
   });
-  it('returns no account to an anonymous session and never queries DB', () => {
-    expect(controller.account(request(''))).toBeNull();
+  it('returns no account to an anonymous session and never queries DB', async () => {
+    await expect(controller.account(request(''))).resolves.toEqual({
+      account: null,
+    });
     expect(service.account).not.toHaveBeenCalled();
   });
   it('does not accept forged owners or profile fields', () => {

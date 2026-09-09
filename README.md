@@ -1,4 +1,10 @@
-# 知路 · 体验版 0.1
+# 知乎界面演示底座
+
+2026-09-09：新方向为知乎推荐、详情、设置三页复刻，加真实登录和按账号独立的数据管理。[在线入口](https://icnimtns216g.feishuapp.com/app/app_17dg665m8tq)。[开发交接与接口说明](docs/zhihu-demo-handoff.md)；[视觉规格](docs/zhihu-demo-design.md)。当前首页采用新底座；以下为保留在 `/map`、`/read` 的旧知路背景。
+
+推荐包含六篇原创演示回答。收藏、赞同、关注、浏览历史、昵称、简介和偏好使用服务端数据库保存；登录账号独立于知乎。发布与浏览器验收记录见 `docs/zhihu-demo-release.md`。
+
+## 原知路体验
 
 最新发布：[先选题再检索线上版](https://icnimtns216g.feishuapp.com/app/app_17dg665m8tq)。首页展示多个方向，点选后调用 CLI 搜索；[发布与验收记录](docs/topic-first-release-20260908.md)。线上匿名搜索已通过，浏览器点击复验因用户接管暂停。
 

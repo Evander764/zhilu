@@ -26,7 +26,8 @@ async function demoRequest<T>(
     throw new Error('无法连接到账号服务，请检查网络后重试');
   }
 }
-export const getDemoAccount = () => demoRequest<DemoAccount | null>('me');
+export const getDemoAccount = async () =>
+  (await demoRequest<{ account: DemoAccount | null }>('me')).account;
 export const saveDemoProfile = (data: DemoProfileInput) =>
   demoRequest<DemoAccount>('me/profile', 'PUT', data);
 export const setDemoActivity = (

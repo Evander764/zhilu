@@ -40,13 +40,15 @@ export class ZhihuDemoController {
 
   @Get('me')
   @Header('Cache-Control', 'private, no-store')
-  account(@Req() req: Request) {
+  async account(@Req() req: Request) {
     if (!req.userContext?.userId || req.userContext.isSystemAccount)
-      return null;
-    return this.service.account(
-      requireDemoUser(req.userContext),
-      req.userContext.userName,
-    );
+      return { account: null };
+    return {
+      account: await this.service.account(
+        requireDemoUser(req.userContext),
+        req.userContext.userName,
+      ),
+    };
   }
 
   @Put('me/profile')
