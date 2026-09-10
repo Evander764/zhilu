@@ -129,7 +129,7 @@ shared/ # 前后端共享的目录
 
 1. 优先使用项目已有依赖，仅在无法实现时安装新依赖
 2. 使用前先查看 `package.json` 确保依赖已存在
-3. **子包完整性检查**：部分库有多个子包（如 `@radix-ui/react-*` 系列每个组件都是独立子包），添加 import 后必须确认 package.json 中包含所有需要的子包
+3. **子包完整性检查**：部分库有多个子包（如 `@dnd-kit/core` + `@dnd-kit/sortable` + `@dnd-kit/utilities`），添加 import 后必须确认 package.json 中包含所有需要的子包
 4. 用法不清时查看 readme，可进一步搜索或网页访问获取信息
 
 ## 文件命名约定
@@ -146,39 +146,6 @@ shared/ # 前后端共享的目录
 - 项目依赖已安装完整，前后端 devServer 已启动并自动重启（无需怀疑），文件变更自动热重载
 - `/api` 和 `/openapi` 代理已配置，前端 TS 严格模式已禁用，后端已启用
 - Rspack 用于构建，已配置好，**禁止修改**
-
-### 平台 runtime 接口（`__runtime__`）在本地要靠 env pull 才通
-
-dev server 自己只代理 `/api`、`/openapi`、`/__innerapi__`。`/app/<appId>/__runtime__/*` 这一整类平台 runtime 接口走的是另一条路：`npm run dev:local` 会先跑 `lark-cli apps +env-pull` 把沙箱身份/凭证拉进 `.env.local`，其中的 `MIAODA_DEV_PLATFORM_BASE`（或 legacy `SANDBOX_PUBLIC_URL`）才让 dev-proxy 把 `__runtime__` 反代到远端沙箱。
-
-**env pull 失败、未装 lark-cli、或 `.spark/meta.json` 缺 app_id 时，启动脚本只 warn 不中断**，反代就不会挂上。此时这些端点的症状是：**POST 返回 404；GET 落到 Vite 的 SPA fallback，返回 200 + `index.html`**（业务侧表现为「返回一坨 HTML，JSON 解析失败」）。
-
-常踩到的端点：
-
-| 端点 | 方法 | 谁会打到它 |
-|------|------|-----------|
-| `api/v1/permissions/roles` | GET | `AppContainer` 每次加载应用自动打 |
-| `api/v1/observability/{logs,traces,metrics}/collect`、`current_server_timestamp` | POST/GET | 平台埋点上报，自动打 |
-| `api/v1/account/login/user` | POST | `useCurrentUserProfile()` → `authClient.session.getUserInfo()` |
-| `api/v1/account/search_user`、`list_users`、`user_profile`、`search_department`、`convert_lark_user` | POST / `user_profile` 是 GET | `business-ui` 的 UserSelect / DepartmentSelect / UserDisplay |
-| `api/v1/account/search`、`api/v1/account/chat/list_chats` | POST | ChatSelect 选群组件 |
-| `api/v1/studio/user/profile` | GET | `getUserProfile()` |
-| `api/v1/storage/object/<bucket>/pre_upload` | POST | `dataloom.storage.uploadFile()` 前端上传 |
-| `api/v1/studio/plugins/tmp_files/acquire_upload_url`、`acquire_download_url` | POST | `capabilityClient` 的文件类入参 |
-
-> `useCurrentUserProfile()` 打的是 `account/login/user`，**不是** `user_profile`/`search_user` 那一排；它另外还打一个 `GET /api/authnpaas/lark-user-id`，那条走 `/api`、被代理、正常。
-
-排查顺序：先看 `.env.local` 里有没有 `MIAODA_DEV_PLATFORM_BASE`，没有就重跑 `env pull`。确认拉不到时：
-
-- **禁止**改 `client/src/components/business-ui/**`（平台保护文件）、**禁止**给组件加兜底请求或改用自研选人控件绕过——发布后这些端点是正常的，绕过写法反而是错的
-- 需要验证「按当前用户过滤」「展示用户姓名」这类逻辑：改由服务端出数据。服务端的 `req.userContext` 和 `AuthNPaasService` 由网关注入，不受此限制（见 `user-identity` / `contacts-service` skill）。`useCurrentUserProfile()` 长期停在加载态就是这个原因
-- 需要验证上传链路：改用接口测试直接打后端接口，或复用库里已有的文件 URL
-
-另外，`UserSelect` 弹层是**搜索驱动**的：不输关键词时列表为空属预期行为，不是接口挂了。
-
-### 服务端启动即崩、`/api` 全部 502
-
-报错形如 `UnknownDependenciesException: Nest can't resolve dependencies of the XxxService (?)... argument Function at index [0]` 时，先查构造函数有没有空参 `@Inject()`（见 plugin-guide），不要先去改 Module 的 `imports` / `providers`。
 
 ## 质量保障流程
 
@@ -485,13 +452,14 @@ NestJS 自己不读 env。直连 NestJS 端口 → header 缺失 → `req.userCo
 
 - **框架**: React 19 + TypeScript
 - **路由**: React Router DOM v6
-- **样式**: tailwindcss（语义化 token）
+- **样式**: styled-jsx + tailwindcss（语义化 token）。styled-jsx 使用前提见下方"样式开发"
 - **UI 组件库**: shadcn/ui — Use components for functionality, heavily style them
 - **图表**: ReactECharts，**开发前必须调用 `/charts-skill`**
 - **图标**: Lucide React（唯一图标库，禁止 Emoji 和其他图标库）
 - **表格/表单/图表**: 见下方"组件 Skill 召回规则"，开发前必须先调用对应 Skill
 - **用户**: 用户信息展示/选择必须用 `business-ui` 组件（阅读 README.md），禁止直接展示 userId
-- **Markdown 渲染**: `components/ui/markdown`（react-markdown + remark-gfm，内置 prose 排版）
+- **富文本**: `business-ui/tiptap-editor`（阅读 README.md）
+- **Markdown 渲染**: `components/ui/streamdown`（内置 prose 排版）
 
 ## API 请求
 
@@ -524,7 +492,8 @@ import { axiosForBackend } from '@lark-apaas/client-toolkit/utils/getAxiosForBac
 | --------------------------------------------------- | --------------------------------------- | --------------------------------- |
 | Table                                               | `@lark-apaas/client-toolkit/antd-table` | 数据表格，**先调 `/table-skill`** |
 | UserSelect/UserDisplay/UserProfile/DepartmentSelect | `business-ui/*`                         | 用户/部门选择展示                 |
-| Markdown                                            | `components/ui/markdown`                | Markdown 渲染（react-markdown + remark-gfm） |
+| TiptapEditorComplete                                | `business-ui/tiptap-editor`             | 富文本编辑器                      |
+| Streamdown                                          | `components/ui/streamdown`              | Markdown/流式渲染                 |
 
 ### 组件 Skill 召回规则（强制执行）
 
@@ -575,6 +544,7 @@ import { axiosForBackend } from '@lark-apaas/client-toolkit/utils/getAxiosForBac
 ```
 需要写样式？
 ├─ 基础布局/间距/颜色 → Tailwind ✅
+├─ 复杂动画/伪元素/高级CSS → styled-jsx ✅
 └─ JS动态计算值 → 行内 style ✅
 ```
 
@@ -586,6 +556,11 @@ import { axiosForBackend } from '@lark-apaas/client-toolkit/utils/getAxiosForBac
 - 颜色优先级：语义化 token（`bg-primary`）> 自定义 token > Tailwind 预设。禁止 `bg-[--primary]`（Tailwind 4 限制）
 - **arbitrary values 中空格用下划线**：`from-[hsl(215_60%_18%)]` 非 `from-[hsl(215 60% 18%)]`
 - `tailwind-theme.css` 自定义属性用 `hsl(H, S%, L%)` 格式（非 `23 10% 23%`）
+
+### styled-jsx 规范
+
+- **技术栈一致性**：仅在已配置 styled-jsx 插件的项目中使用。`package.json` 无 `styled-jsx` 依赖则**禁用**，否则运行时 SyntaxError
+- **禁止动态插值**：`<style jsx>` 内禁止 `${...}` 等表达式（会卡死）。动态值放 CSS 变量，用 `var(--xxx)` 引用
 
 ### 布局/排版
 
@@ -669,8 +644,15 @@ return <h1>{data?.title || '未知标题'}</h1>;
 | 验证       | zod                                                                      |
 | 工具函数   | lodash                                                                   |
 | 样式       | clsx                                                                     |
+| Excel      | xlsx（**仅前端实现，禁止服务端实现**。解析后将结构化数据传到服务端保存） |
+| PDF 导出   | jspdf + html2canvas（**仅前端实现，禁止服务端实现**）                    |
+| 文件上传   | react-dropzone                                                           |
+| 二维码     | qrcode.react                                                             |
 | 用户反馈   | sonner                                                                   |
-
+| 拖拽       | @dnd-kit/core                                                            |
+| 数字动画   | react-countup                                                            |
+| Base64     | js-base64 — `import { encode, decode } from 'js-base64'`                 |
+| 3D 场景    | cobe                                                                     |
 
 ## 滚动分页最佳实践
 

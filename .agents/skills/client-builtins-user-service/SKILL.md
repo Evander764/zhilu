@@ -14,8 +14,6 @@ match-template-name: nestjs-react-fullstack
 
 > **边界说明**：`authClient.session` 仅用于用户登录/登出/获取用户信息等鉴权操作。**插件调用（capability）不属于账户 SDK**，须使用独立的 `capabilityClient`（参见 plugin-guide）。
 >
-> **本地 dev 限制**：本 skill 的能力底层打 `/app/<appId>/__runtime__/api/v1/account/*`。这类端点只有在 `npm run dev:local` 成功 `env pull` 到 `MIAODA_DEV_PLATFORM_BASE`（或 `SANDBOX_PUBLIC_URL`）时才由 dev-proxy 反代到远端沙箱；**env pull 失败或未装 lark-cli 时该反代不挂**（启动脚本只 warn 不中断），表现为 POST 404 / GET 返回 200 + index.html。`useCurrentUserProfile()` 打的是 `account/login/user`；UserSelect / DepartmentSelect / UserDisplay 打 `search_user` / `list_users` / `user_profile` / `search_department`。先确认 `.env.local` 里有 `MIAODA_DEV_PLATFORM_BASE`；确实缺失时禁止改 `business-ui` 组件或换自研控件绕过，改由服务端出数据（`req.userContext` / `AuthNPaasService`）。
->
 > **运行时边界**：本 skill 所有能力（`authClient`、`useCurrentUserProfile`、UserSelect/UserDisplay 等）仅限前端代码使用，**严禁在 `server/**` 中 import**。服务端获取用户身份用 `req.userContext` / `AuthNPaasService`（见 `user-identity` skill），完整边界规则见 coding-guide。
 
 ## 怎么选（决策指引）

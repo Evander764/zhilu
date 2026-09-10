@@ -38,7 +38,7 @@ lark-cli apps --help 2>&1 | grep -q '+plugin-install' && echo "READY" || echo "M
 | 长耗时 AI 结果 | 大体量/多字段/多份/多语言/文件或多模态串联等结构信号命中时，优先前端 `callStream` 渐进展示；需保存则流式结束后复用 CRUD 落库；仅在 Client 侧无法满足时使用后端任务记录 + 状态查询 + 结果读取；禁止单个 HTTP 请求等待完整结果后才返回 |
 | capabilityClient 导入 | `import { capabilityClient } from '@lark-apaas/client-toolkit'` |
 | CapabilityService 导入 | `import { CapabilityService } from '@lark-apaas/fullstack-nestjs-core';` |
-| CapabilityService 注入 | `@Inject(CapabilityService) private readonly capabilityService: CapabilityService`（**禁止空参 `@Inject()`**，会导致启动崩溃 502；业务 Module 无需 imports） |
+| CapabilityService 注入 | `@Inject() private readonly capabilityService: CapabilityService` |
 | 插件实例配置位置 | `server/capabilities/<instance_id>.json`（默认全栈应用）。见「配置目录」段 |
 
 > **capabilityClient 导入警告**：`capabilityClient` 是从 `@lark-apaas/client-toolkit` 直接导入的独立对象，**不是**从 `getDataloom()` 上获取的。正确且唯一的方式：`import { capabilityClient } from '@lark-apaas/client-toolkit'`。

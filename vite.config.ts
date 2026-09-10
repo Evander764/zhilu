@@ -1,5 +1,5 @@
 import path from 'path';
-import { defineConfig } from '@lark-apaas/coding-preset-vite-react';
+import { defineConfig } from '@lark-apaas/fullstack-vite-preset';
 
 export default defineConfig({
   resolve: {

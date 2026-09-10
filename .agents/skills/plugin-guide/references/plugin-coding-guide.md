@@ -76,18 +76,12 @@
 #### call / callStream 函数签名
 
 ```typescript
-// 前端 capabilityClient（@lark-apaas/client-toolkit，实际类型来自 @lark-apaas/client-capability）
-.call<T = unknown>(actionKey: string, params?: Record<string, unknown>): Promise<T>              // 非流式
-.callStream<T = unknown>(actionKey: string, params?: Record<string, unknown>): AsyncIterable<T>  // 流式
+.call(actionKey: string, input: object)       // 非流式，返回 Promise<output>
+.callStream(actionKey: string, input: object)  // 流式，返回 AsyncIterable<chunk>
 ```
 
 - **第一个参数 `actionKey`**：必须是字符串，值来自 `get_plugin_ai_json` 返回的 `actions[].key`（如 `'sendFeishuMessage'`、`'textGenerate'`）
-- **第二个参数 `params`**：类型是 `Record<string, unknown>`，结构符合 `actions[].inputSchema`
-- 上面是**前端**签名，带泛型。**服务端 `CapabilityService` 的 `call` / `callStream` / `callStreamWithEvents` 都没有泛型**，两者不通用，详见「Server 侧调用方式」
-
-> **`Record<string, unknown>` 不接 `interface` 声明的对象**（interface 没有隐式索引签名），直接传会撞
-> `Argument of type 'XxxInput' is not assignable to parameter of type 'Record<string, unknown>'. Index signature for type 'string' is missing in type 'XxxInput'.`
-> 三种正确写法：① 直接传内联对象字面量；② 入参类型用 `type XxxInput = { ... }` 而非 `interface`（type 别名有隐式索引签名）；③ 已有 interface 时在调用点显式 `input as unknown as Record<string, unknown>`。**不要为此改用 `as any`。**
+- **第二个参数 `input`**：必须是对象，结构符合 `actions[].inputSchema`
 
 ```typescript
 // ❌ 错误：把参数 JSON.stringify 后当作 actionKey
@@ -274,37 +268,13 @@ import { CapabilityService } from '@lark-apaas/fullstack-nestjs-core';
 export class XxxService {
   private readonly logger = new Logger(XxxService.name);
 
-  // 注入 token 必须显式写成 @Inject(CapabilityService)
   constructor(
-    @Inject(CapabilityService) private readonly capabilityService: CapabilityService,
+    @Inject() private readonly capabilityService: CapabilityService,
   ) {}
 }
 ```
 
-**禁止空参 `@Inject()`**。本 stack 的 `nest-cli.json` 用 `builder: swc`，空参 `@Inject()` 会把注入 token 置为 undefined，Nest 回退读 `design:type` 拿到 `Function`，服务端启动即崩溃、所有 `/api` 请求返回 502：
-
-```
-UnknownDependenciesException: Nest can't resolve dependencies of the XxxService (?).
-Please make sure that the argument Function at index [0] is available in the XxxModule context.
-```
-
-见到这段报错先查构造函数有没有空参 `@Inject()`，不要去改 Module 的 `imports` / `providers`。
-
-**业务 Module 不需要注册 CapabilityModule**。`PlatformModule` 是 `@Global()` 且已把 `CapabilityModule` 放进 `exports`，`CapabilityService` 全局可注入。不要在业务 Module 里写 `imports: [CapabilityModule.forRoot(...)]` 或 `imports: [PlatformModule.forRoot()]`。
-
-同一规则适用于从 `@lark-apaas/fullstack-nestjs-core` 注入的其他平台服务（`AuthNPaasService`、`FileService` 等）。
-
 #### 3. 调用示例
-
-服务端 `CapabilityExecutor` 的**三个方法全都没有泛型参数**（`@lark-apaas/nestjs-capability`）：
-
-```typescript
-call(actionName: string, input: unknown, context?: Partial<PluginActionContext>): Promise<unknown>;
-callStream(actionName: string, input: unknown, context?): AsyncIterable<unknown>;
-callStreamWithEvents(actionName: string, input: unknown, context?): AsyncIterable<StreamEvent<unknown>>;
-```
-
-写 `.call<T>(...)` / `.callStream<T>(...)` / `.callStreamWithEvents<T>(...)` 都会报「应有 0 个类型参数，但获得 1 个」。泛型只存在于前端 `capabilityClient`。注意服务端 `input` 是**必传**（没有 `?`），且类型是 `unknown` 而非前端的 `Record<string, unknown>`。服务端接 `unknown` 后在运行时收窄，禁止 `as any`：
 
 ```typescript
 const inputParams = {
@@ -312,11 +282,9 @@ const inputParams = {
 };
 
 try {
-  const output: unknown = await this.capabilityService
+  const output = await this.capabilityService
     .load('')
     .call('', inputParams);
-  // 运行时收窄后再取字段，例如：
-  // if (typeof output === 'object' && output !== null && 'content' in output) { ... }
   return output;
 } catch (error) {
   this.logger.error('pluginInstance call failed', {
