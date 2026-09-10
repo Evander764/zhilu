@@ -18,4 +18,14 @@
 
 提交并推送 `sprint/default` 后，用 `apps +release-create --app-id app_17dut1cfq4a --branch sprint/default --as user` 发起发布，并用同一 release_id 读回 `finished`；随后运行 `scripts/zhihu-demo/verify-online.mjs` 检查新地址。
 
-发布状态：待本轮发布回读。
+## 发布结果
+
+- 发布 `7683801768120044756` 已返回 `finished`，发布人为马新淳。
+- 部署提交：`a08a385a37a2de82ccbf211cf439f712d0852d6a`。
+- [线上页面](https://ucne7375gmu5.feishuapp.com/app/app_17dut1cfq4a)；[设置](https://ucne7375gmu5.feishuapp.com/app/app_17dut1cfq4a/settings/account)。
+- 沿用原演示版的公开浏览设置：`scope=All`、`require_login=false`；个人数据接口仍强制登录。
+- 推荐、详情、设置页面 HTTP 200，三页 HTML 均包含本轮部署提交；匿名 smoke 通过（6 篇内容，account=null，5 类个人数据接口拒绝匿名请求）。
+- online 事务内实测本人资料可读 1 行、其他账号 0 行、匿名 0 行，事务回滚，无测试数据遗留。
+- GitHub 使用 `deploy/group6` 分支承载目标组织部署；`main` 保持原组织历史。
+- 本次没有重新做视觉设计；新组织登录后的浏览器保存/刷新仍待实际用户验收。
+

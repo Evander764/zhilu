@@ -1,5 +1,7 @@
 # 知路：知乎黑客松第 6 组
 
+[打开第 6 组线上版本](https://ucne7375gmu5.feishuapp.com/app/app_17dut1cfq4a) · [开发管理入口](https://miaoda.feishu.cn/app/app_17dut1cfq4a)
+
 当前为原版三页底座在第 6 组组织的重新发布，详见 [第 6 组发布记录](docs/group6-release.md)。下方旧地址和记录属于原组织历史版本。
 
 # 知乎界面演示底座
