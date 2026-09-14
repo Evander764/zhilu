@@ -67,7 +67,9 @@ export default function ZhihuDemoPage() {
   const [dataTab, setDataTab] = useState<DemoActivityKind>('bookmark');
   const [showAll, setShowAll] = useState(false);
   const [historyError, setHistoryError] = useState('');
-  const isSettings = location.pathname.startsWith('/settings');
+  const isSettings =
+    location.pathname.startsWith('/settings') ||
+    location.pathname === '/auth/zhihu/callback';
   const article = id ? DEMO_ARTICLES.find((item) => item.id === id) : undefined;
   const activeTab = params.get('tab') || 'recommend';
   const query = (params.get('q') || '').trim().toLowerCase();

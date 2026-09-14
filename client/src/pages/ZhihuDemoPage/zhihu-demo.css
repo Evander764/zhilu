@@ -910,6 +910,89 @@
 .zd-setting-row > button[role='switch'][data-state='checked'] {
   background: var(--zd-blue);
 }
+.zd-zhihu-connection {
+  padding: 22px 18px;
+  border-bottom: 1px solid #eceef1;
+  background: #f7faff;
+  overflow-wrap: anywhere;
+}
+.zd-zhihu-connection-heading,
+.zd-zhihu-result-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.zd-zhihu-connection h2 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+.zd-zhihu-connection p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #526078;
+}
+.zd-zhihu-connection .zd-primary {
+  flex-shrink: 0;
+}
+.zd-zhihu-connection .zd-primary:disabled {
+  background: #e1e7ef;
+  color: #59677b;
+  cursor: not-allowed;
+}
+.zd-zhihu-connection-note {
+  margin-top: 12px;
+}
+.zd-zhihu-connection .zd-zhihu-connection-error {
+  margin-top: 14px;
+  color: #a13333;
+}
+.zd-zhihu-results {
+  margin-top: 18px;
+}
+.zd-zhihu-result-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+.zd-zhihu-result-summary svg {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.zd-zhihu-result {
+  padding: 14px 0;
+  border-bottom: 1px solid #e1e7ef;
+}
+.zd-zhihu-result:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.zd-zhihu-result h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.zd-zhihu-result-title span {
+  font-size: 13px;
+  color: #526078;
+}
+.zd-zhihu-result-title [data-status='error'] {
+  color: #a13333;
+}
+.zd-zhihu-result a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  color: var(--zd-blue);
+  margin: 8px 0 4px;
+}
+.zd-zhihu-result a svg {
+  flex-shrink: 0;
+}
 .zd-profile-form {
   padding: 22px 18px;
 }

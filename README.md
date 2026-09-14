@@ -2,7 +2,7 @@
 
 [打开第 6 组线上版本](https://ucne7375gmu5.feishuapp.com/app/app_17dut1cfq4a) · [开发管理入口](https://miaoda.feishu.cn/app/app_17dut1cfq4a)
 
-当前为原版三页底座在第 6 组组织的重新发布，详见 [第 6 组发布记录](docs/group6-release.md)。下方旧地址和记录属于原组织历史版本。
+第 6 组网站沿用推荐、详情、设置三页底座，账号设置新增知乎连接入口。OAuth 配置、回调登记与验收边界见 [接入说明](docs/zhihu-oauth-661.md)，原发布记录见 [第 6 组发布记录](docs/group6-release.md)。下方旧地址和记录属于原组织历史版本。
 
 # 知乎界面演示底座
 
