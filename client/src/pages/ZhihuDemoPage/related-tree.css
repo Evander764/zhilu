@@ -196,6 +196,7 @@
   height: 100dvh;
   max-height: 100dvh;
   transform: none;
+  translate: none;
   display: flex;
   flex-direction: column;
   padding: 20px 16px;
