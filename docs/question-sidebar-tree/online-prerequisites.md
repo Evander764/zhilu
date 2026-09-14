@@ -1,5 +1,13 @@
 # 第 6 组线上差距与最小修复方案
 
+## 当前状态：已发布并复验
+
+2026-09-15，发布 `7685430704193162457` / 提交 `033bac54931df283ab39c242a3b36b5849409fa2` 已 finished。已新建独立的第6组搜索密钥，只通过内存和标准输入存入本应用 online 的 `ZHIHU_ACCESS_SECRET`，并读回比对；原 Keychain 未改变。密钥仍共享所属知乎账号的试用额度，提供方权限为完整API，网站仅向外暴露固定搜索请求。
+
+预算的13项结构变更已迁移到 online，函数 owner、固定 search_path、RLS 和限制性策略已读回。真实 related 搜索返回8问题、9回答、1文章，缓存及匿名账号隔离通过。最终页面、发布脚本和源码均未命中实际搜索密钥。并行 OAuth 改动及其回调登记门禁完整保留。
+
+以下为准备阶段的历史核验，不能据此把当前版本误判为尚未配置。
+
 核验边界固定为 profile `zhihu-hackathon-group6`、应用 `app_17dut1cfq4a`。线上仅查询环境键、表清单与函数是否存在，不读取变量值或个人行；开发环境仅新增下述预算结构并用可回滚夹具验证。
 
 2026-09-14/15 读回：online 环境键清单为空；仅有 zhihu_demo_profiles、zhihu_demo_activity；`to_regprocedure('zhilu_reserve_search(integer)') IS NOT NULL` 为 false。旧 `/api/zhilu/status` 503 提示阅读资料无法加载，来自其优先读取缺失 catalog；旧 `/api/zhilu/search` 503 提示搜索未能完成，与额度函数缺失的路径一致。这不是空结果。

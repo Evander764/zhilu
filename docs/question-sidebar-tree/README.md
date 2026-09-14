@@ -1,6 +1,6 @@
-# 相关问题侧栏候选
+# 相关问题侧栏
 
-状态：本地实现候选，待协调独立复验、同一应用部署及线上操作验收。不能把原线上地址当作本轮功能的交付。
+状态：2026-09-15 已发布并完成线上技术复验。发布 `7685430704193162457` 对应提交 `033bac54931df283ab39c242a3b36b5849409fa2`；[打开当前问题页面](https://ucne7375gmu5.feishuapp.com/app/app_17dut1cfq4a/question/learning-with-ai/answer/demo)。合并后的 161 项测试、构建、真实搜索及桌面/手机操作通过；主观阅读体验待用户反馈。
 
 读者打开六篇示例中的问题后，页面按标题调用官方知乎搜索。右侧显示当前问题、按真实问题编号归组的相关问题及回答；点击问题会切换应用内路由并检索新标题，回答提供作者、搜索片段与知乎原文链接。文章进入补充阅读，不编造问题归属。外部问题只展示搜索片段，不套用六篇示例正文或示例作者。
 
@@ -13,11 +13,11 @@
 
 ## 版式约束
 
-使用 aesthetic-layout 审计模式，沿用既有知乎演示方向。主任务是读正文，支任务是继续探索；P0 为标题/正文，P1 为问题跳转和来源，P2 为作者及搜索说明。原 `zhihu-demo.css` 和原答案 `<article>` 逐字节不动，694/296px 网格和既有 1050/760px 断点沿用。
+使用 aesthetic-layout 审计模式，沿用既有知乎演示方向。主任务是读正文，支任务是继续探索；P0 为标题/正文，P1 为问题跳转和来源，P2 为作者及搜索说明。本功能未修改原答案 `<article>` 或原 `zhihu-demo.css`；并行账号连接任务在 `5e6ab17` 追加的设置页样式和回调路由已完整保留。正文 694px 与原断点沿用。
 
 清晰基线是原作者侧栏；策略候选是在原侧栏加入有层级线的问题与回答，作者信息折叠后仍可达；过载反例是把正文改成全屏力导图或同时预抓多层关系，本轮不采用。蓝色用于当前节点/可点击入口，灰线只表达检索分组和问题拥有回答的关系，不声称语义推理或作者引用。无新字体、图片、生成模型或依赖。
 
-桌面展开/收起不切换网格、不触碰页面滚动。手机抽屉采用现有 Radix Dialog 的焦点约束与 Esc 关闭，按钮位于回顶按钮上方；相关问题的自动检索与抽屉是否遮住正文分开，初始不自动弹出抽屉。真实像素、键盘、焦点及最终审美仍需线上读回。
+桌面展开/收起不切换网格、不触碰页面滚动。手机抽屉采用现有 Radix Dialog 的焦点约束与 Esc 关闭，按钮位于回顶按钮上方；相关问题的自动检索与抽屉是否遮住正文分开，初始不自动弹出抽屉。已在 1468、1024、390px 线上验证边界、键盘焦点与 420px 阅读位置恢复。手机必须同时清除基础 Dialog 的独立 `translate` 属性，仅设置 `transform:none` 不足以归位。
 
 ## 验证入口
 
@@ -28,13 +28,13 @@ npm test -- --runInBand
 npm run lint
 npm run build:prod
 git diff --check
-node scripts/zhihu-demo/verify-related-scope.mjs ../deliverables/question-sidebar-tree-20260914/baseline.json
+node scripts/zhihu-demo/verify-related-scope.mjs ../deliverables/question-sidebar-tree-20260914/baseline-integrated.json
 node scripts/zhihu-demo/check-related-sensitivity.mjs
 node scripts/zhihu-demo/verify-related-render.mjs
 node scripts/zhihu-demo/verify-related.mjs --upstream-file ../deliverables/question-sidebar-tree-20260914/related-real-upstream.json
 ```
 
-敏感性检查的两项必须满足：实际校验拒绝时 exit 1；故意移除实际校验时 exit 0，使反向检查能发现失效。不得在拒绝分支末尾无条件 throw，不能用一个永远报错的脚本证明门禁有效。
+原始 `baseline.json` 保留不变，用于最初侧栏实现。`baseline-integrated.json` 固定到并行任务已发布的 `5e6ab17`，用于检查保留其全部改动后仅叠加抽屉修复；这次基线升级不修改验收脚本或测试。敏感性检查的两项必须满足：实际校验拒绝时 exit 1；故意移除实际校验时 exit 0，使反向检查能发现失效。不得在拒绝分支末尾无条件 throw，不能用一个永远报错的脚本证明门禁有效。
 
 内存组件渲染验证只证明当前 React 组件包含正确路由、来源和状态；请求生命周期测试在数据源边界模拟响应，服务测试使用实际 Controller/Service 与模拟外部 HTTP/数据库，不是线上搜索证据。线上必须在候选部署后另跑下面两项，并按 `online-acceptance.md` 操作浏览器。
 
@@ -45,4 +45,4 @@ node scripts/zhihu-demo/verify-online.mjs https://ucne7375gmu5.feishuapp.com/app
 
 ## 回撤
 
-功能代码在独立分支上，未合并发布分支。必要时只回撤本轮提交。额度结构/目标配置由协调任务单独管理，代码回撤不删除预算记录或个人数据。
+功能代码已进入 `deploy/group6`。回撤必须保留并行账号连接改动，不得将整个应用退回早于 `5e6ab17` 的版本。额度结构和专用搜索配置由服务端管理，代码回撤不删除预算记录或个人数据。专用密钥与所属知乎账号共享试用额度，应用限制每天 200 次、两秒一次；它独立可撤销，但提供方不支持搜索专用权限范围。
