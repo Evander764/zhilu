@@ -24,7 +24,48 @@ import type {
   DemoAccount,
   DemoActivityKind,
   DemoProfileInput,
+  ZhihuOAuthCompletion,
+  ZhihuOAuthCompletionInput,
+  ZhihuOAuthStart,
+  ZhihuOAuthStatus,
 } from '../../../shared/api.interface';
+
+async function oauthRequest<T>(path: string, data?: unknown): Promise<T> {
+  try {
+    const response = await axiosForBackend({
+      url: `/api/zhihu-oauth/${path}`,
+      method: data === undefined ? 'GET' : 'POST',
+      data,
+      timeout: 35000,
+    });
+    if (response.status >= 400) {
+      if (response.status === 401)
+        throw new Error('请先登录本应用，再连接知乎。');
+      throw new Error(
+        response.data?.error?.message || '知乎连接服务暂时不可用，请稍后重试。',
+      );
+    }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error && !('response' in error)) throw error;
+    const response = (
+      error as {
+        response?: { status?: number; data?: { error?: { message?: string } } };
+      }
+    )?.response;
+    if (response?.status === 401)
+      throw new Error('请先登录本应用，再连接知乎。');
+    throw new Error(
+      response?.data?.error?.message || '知乎连接服务暂时不可用，请稍后重试。',
+    );
+  }
+}
+export const getZhihuOAuthStatus = () =>
+  oauthRequest<ZhihuOAuthStatus>('status');
+export const startZhihuOAuth = (proof: string) =>
+  oauthRequest<ZhihuOAuthStart>('start', { proof });
+export const completeZhihuOAuth = (input: ZhihuOAuthCompletionInput) =>
+  oauthRequest<ZhihuOAuthCompletion>('complete', input);
 
 async function demoRequest<T>(
   path: string,

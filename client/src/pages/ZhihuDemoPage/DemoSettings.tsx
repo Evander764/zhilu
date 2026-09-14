@@ -27,6 +27,7 @@ import type {
   DemoPreferences,
 } from '../../../../shared/api.interface';
 import type { DemoAccountState } from './use-demo-account';
+import { ZhihuConnection } from './ZhihuConnection';
 
 const settingItems = [
   { id: 'account', label: '账号与密码', icon: UserRound },
@@ -107,6 +108,9 @@ export function DemoSettings({
                   : '管理你的个人偏好'}
             </p>
           </div>
+          {section === 'account' && (
+            <ZhihuConnection onLogin={() => openModal('login')} />
+          )}
           {loading ? (
             <div className="zd-empty">正在加载账号…</div>
           ) : !account ? (
@@ -409,7 +413,9 @@ export function DemoSettings({
         <h2>常见问题</h2>
         <h3>账号与数据</h3>
         <p>1. 这里和我的知乎账号互通吗？</p>
-        <span>这是独立的演示应用，不会读取或修改知乎账号。</span>
+        <span>
+          可在账号设置中连接知乎，授权后查看创作、关注和收藏；本应用里的收藏仍独立保存。
+        </span>
         <p>2. 换设备后数据还在吗？</p>
         <span>使用同一应用账号登录后，可以继续查看已保存的内容。</span>
         <p>3. 别人能看到我的收藏吗？</p>

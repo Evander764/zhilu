@@ -14,6 +14,7 @@ const RoutesComponent = () => {
       />
       <Route path="/settings" element={<ZhihuDemoPage />} />
       <Route path="/settings/:section" element={<ZhihuDemoPage />} />
+      <Route path="/auth/zhihu/callback" element={<ZhihuDemoPage />} />
       <Route path="/map" element={<QuestionMapPage />} />
       <Route path="/read" element={<ZhiluPage />} />
       <Route path="*" element={<ZhihuDemoPage />} />

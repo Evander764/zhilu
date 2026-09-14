@@ -1,4 +1,42 @@
 import { z } from 'zod';
+
+export interface ZhihuOAuthStatus {
+  version: string;
+  appId: string;
+  redirectUri: string;
+  configured: boolean;
+  callbackRegistered: boolean;
+  ready: boolean;
+  signedIn: boolean;
+  message: string;
+}
+export interface ZhihuOAuthStart {
+  authorizationUrl: string;
+  ticket: string;
+}
+export interface ZhihuOAuthCompletionInput {
+  code: string;
+  state: string;
+  ticket: string;
+  verifier: string;
+}
+export interface ZhihuOAuthItem {
+  title: string;
+  summary: string;
+  url: string | null;
+}
+export interface ZhihuOAuthDataResult {
+  id: string;
+  name: string;
+  status: 'success' | 'empty' | 'error';
+  message: string;
+  item: ZhihuOAuthItem | null;
+}
+export interface ZhihuOAuthCompletion {
+  authorized: true;
+  readAt: string;
+  results: ZhihuOAuthDataResult[];
+}
 export type { RelatedRequest, RelatedTree } from './related-tree';
 export type {
   DemoAccount,

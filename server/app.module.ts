@@ -6,6 +6,7 @@ import { GlobalExceptionFilter } from './common/filters/exception.filter';
 import { ViewModule } from './modules/view/view.module';
 import { ZhiluModule } from './modules/zhilu/zhilu.module';
 import { ZhihuDemoModule } from './modules/zhihu-demo/zhihu-demo.module';
+import { ZhihuOAuthModule } from './modules/zhihu-oauth/zhihu-oauth.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ZhihuDemoModule } from './modules/zhihu-demo/zhihu-demo.module';
     PlatformModule.forRoot(),
     ZhiluModule,
     ZhihuDemoModule,
+    ZhihuOAuthModule,
     // ====== @route-section: business-modules START ======
     // Place all business modules here.Do NOT add fallback modules here.
     // ====== @route-section: business-modules END ======
