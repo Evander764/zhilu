@@ -49,16 +49,25 @@ export async function searchWithCli(query: string): Promise<unknown> {
         encoding: 'utf8',
         shell: false,
       },
-      (error, stdout) => {
+      (error, stdout, stderr) => {
         // Never expose the child error, arguments, stderr or credential environment.
-        let data: { Code?: number };
+        let data: { Code?: number; error?: { code?: string } };
         try {
-          data = JSON.parse(stdout);
+          data = JSON.parse(stdout || stderr);
         } catch {
           reject(new ServiceUnavailableException('搜索未能完成，请稍后重试。'));
           return;
         }
-        if (data?.Code === 30001 || data?.Code === 30002) {
+        if (
+          data?.Code === 20001 ||
+          ['AUTH_REQUIRED', 'AUTH_INVALID', 'ENV_SHADOWS_KEYCHAIN'].includes(
+            data?.error?.code || '',
+          )
+        ) {
+          reject(
+            new HttpException('知乎搜索授权暂不可用，请联系应用维护者。', 401),
+          );
+        } else if (data?.Code === 30001 || data?.Code === 30002) {
           reject(
             new HttpException(
               data.Code === 30002

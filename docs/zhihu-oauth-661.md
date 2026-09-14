@@ -5,7 +5,7 @@
 - 沿用应用 `app_17dut1cfq4a`，profile `zhihu-hackathon-group6`，身份 `user`。
 - [账号设置](https://ucne7375gmu5.feishuapp.com/app/app_17dut1cfq4a/settings/account)增加“连接知乎”。
 - 回调地址：`https://ucne7375gmu5.feishuapp.com/app/app_17dut1cfq4a/auth/zhihu/callback`。
-- 基于既有线上版本的源码分支 `4036867`，未合入“相关问题树”待审核 PR #1。
+- OAuth 独立开发基于原线上版本 `4036867`。发布前远端收到另一任务正在发布的“相关问题树”更新 `bcfe3a8`，本次合并保留该更新，避免覆盖并行发布；不修改其搜索配置或数据表。
 - 原应用账号、收藏、浏览记录和数据表保持原有行为，无跨组织数据迁移。
 
 ## 授权流程
@@ -35,7 +35,7 @@ App Key 来自初始化项目的 macOS 钥匙串，Access Secret 来自官方 CL
 
 ## 验证与恢复
 
-- 94 项测试通过，包括授权关联、跨账号拒绝、匿名拒绝、空数据、失败、畸形响应、危险外链、浏览器凭证清理及原功能回归。
+- 合并后共 161 项测试通过，包括授权关联、跨账号拒绝、匿名拒绝、空数据、失败、畸形响应、危险外链、浏览器凭证清理及相关问题树和原功能回归。
 - lint（类型、代码、样式）与前后端生产构建通过；不启动本地网站。
 - 发布后运行 `node scripts/zhihu-demo/verify-oauth-online.mjs <部署提交>`，核对线上版本、回调页面和匿名边界；另运行原 `verify-online.mjs`。
 - 在真实线上网站检查桌面和手机尺寸，区分网页发布、真实 OAuth 验收和用户体验验收。

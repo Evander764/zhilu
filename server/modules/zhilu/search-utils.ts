@@ -5,24 +5,31 @@ export const searchInput = z.object({
   query: z.string().trim().min(2).max(120),
   nodeId: z.string().max(40).optional(),
 });
-export const upstreamSchema = z.object({
-  Code: z.number(),
-  Data: z
-    .object({
-      Items: z
-        .array(
-          z.object({
-            Title: z.string(),
-            AuthorName: z.string().optional(),
-            ContentText: z.string(),
-            Url: z.string(),
-          }),
-        )
-        .optional(),
-    })
-    .nullable()
-    .optional(),
-});
+export const upstreamSchema = z
+  .object({
+    Code: z.number(),
+    Data: z
+      .object({
+        Items: z
+          .array(
+            z.object({
+              Title: z.string(),
+              AuthorName: z.string().optional(),
+              ContentText: z.string(),
+              Url: z.string(),
+              ContentType: z.string().optional(),
+              ContentID: z.string().optional(),
+            }),
+          )
+          .optional(),
+      })
+      .nullable()
+      .optional(),
+  })
+  .refine(
+    (value) => value.Code !== 0 || Array.isArray(value.Data?.Items),
+    'Missing search items',
+  );
 export function safeZhihuUrl(value: string): boolean {
   try {
     const url = new URL(value);
@@ -63,6 +70,8 @@ export function normalizeItems(
       author: plainText(item.AuthorName || '知乎用户'),
       excerpt: plainText(item.ContentText).slice(0, 600),
       url: item.Url,
+      ...(item.ContentType ? { contentType: item.ContentType } : {}),
+      ...(item.ContentID ? { contentId: item.ContentID } : {}),
     }));
 }
 export function shanghaiDay(now = new Date()): string {

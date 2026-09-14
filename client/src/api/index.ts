@@ -1,5 +1,26 @@
 import { axiosForBackend } from '@lark-apaas/client-toolkit/utils/getAxiosForBackend';
 import type {
+  RelatedRequest,
+  RelatedTree,
+} from '../../../shared/api.interface';
+import { relatedTreeSchema } from '../../../shared/related-tree';
+
+export async function getRelatedTree(
+  data: RelatedRequest,
+): Promise<RelatedTree> {
+  const response = await axiosForBackend({
+    url: '/api/zhilu/related',
+    method: 'POST',
+    data,
+  });
+  if (response.status >= 400) throw { response: { status: response.status } };
+  const parsed = relatedTreeSchema.safeParse(response.data);
+  if (!parsed.success) throw new Error('RELATED_INVALID_RESPONSE');
+  // The client tsconfig disables strictNullChecks, which makes Zod infer optional keys.
+  // The complete wire shape has been validated above before narrowing it.
+  return parsed.data as RelatedTree;
+}
+import type {
   DemoAccount,
   DemoActivityKind,
   DemoProfileInput,

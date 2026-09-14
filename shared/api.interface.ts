@@ -37,6 +37,7 @@ export interface ZhihuOAuthCompletion {
   readAt: string;
   results: ZhihuOAuthDataResult[];
 }
+export type { RelatedRequest, RelatedTree } from './related-tree';
 export type {
   DemoAccount,
   DemoActivity,
@@ -123,6 +124,8 @@ export interface SearchItem {
   author: string;
   excerpt: string;
   url: string;
+  contentType?: string;
+  contentId?: string;
 }
 export interface SearchResult {
   items: SearchItem[];
