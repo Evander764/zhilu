@@ -942,10 +942,12 @@
 }
 .zd-zhihu-connection .zd-primary:disabled {
   background: #e1e7ef;
-  color: #59677b;
+  color: #59677b !important;
+  border-color: #d3dae5;
+  opacity: 1;
   cursor: not-allowed;
 }
-.zd-zhihu-connection-note {
+.zd-zhihu-connection .zd-zhihu-connection-note {
   margin-top: 12px;
 }
 .zd-zhihu-connection .zd-zhihu-connection-error {
