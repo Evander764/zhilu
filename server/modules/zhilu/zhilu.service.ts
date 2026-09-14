@@ -28,6 +28,7 @@ import { cliAvailable, searchWithCli } from './zhihu-cli';
 export class ZhiluService {
   private readonly logger = new Logger(ZhiluService.name);
   private graphCache: { value: Graph; expires: number } | null = null;
+  private readonly searchInFlight = new Map<string, Promise<SearchResult>>();
   private readonly searchCache = new Map<
     string,
     { value: SearchResult; expires: number }
@@ -119,6 +120,21 @@ export class ZhiluService {
     const cached = this.searchCache.get(key);
     if (cached && cached.expires > Date.now())
       return { ...cached.value, cached: true };
+    const pending = this.searchInFlight.get(key);
+    if (pending) return pending;
+    const request = this.performSearch(combined, key);
+    this.searchInFlight.set(key, request);
+    try {
+      return await request;
+    } finally {
+      this.searchInFlight.delete(key);
+    }
+  }
+
+  private async performSearch(
+    combined: string,
+    key: string,
+  ): Promise<SearchResult> {
     try {
       await this.reserveRequest();
       const response =
@@ -139,10 +155,15 @@ export class ZhiluService {
       const parsedResponse = upstreamSchema.safeParse(response.data);
       if (!parsedResponse.success)
         throw new ServiceUnavailableException('搜索返回格式异常，请稍后重试。');
-      if (parsedResponse.data.Code === 30001)
+      if ([30001, 30002].includes(parsedResponse.data.Code))
         throw new HttpException(
           '知乎搜索暂时限流，请稍后重试。精选路径仍可阅读。',
           429,
+        );
+      if (parsedResponse.data.Code === 20001)
+        throw new HttpException(
+          '知乎搜索授权暂不可用，请联系应用维护者。',
+          401,
         );
       if (parsedResponse.data.Code !== 0)
         throw new ServiceUnavailableException(
@@ -162,7 +183,18 @@ export class ZhiluService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       // Never log Axios errors: they contain Authorization and user search text.
-      const cause = error as { code?: string; cause?: { code?: string } };
+      const cause = error as {
+        code?: string;
+        cause?: { code?: string };
+        response?: { status?: number };
+      };
+      if ([401, 403].includes(cause.response?.status || 0))
+        throw new HttpException(
+          '知乎搜索授权暂不可用，请联系应用维护者。',
+          401,
+        );
+      if (cause.response?.status === 429)
+        throw new HttpException('知乎搜索暂时限流，请稍后重试。', 429);
       const code = cause.cause?.code || cause.code || 'unknown';
       this.logger.warn(
         `search_unavailable:${/^[A-Z0-9_]{3,24}$/.test(code) ? code : 'unknown'}`,

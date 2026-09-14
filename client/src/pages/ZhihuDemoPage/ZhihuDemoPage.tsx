@@ -34,7 +34,13 @@ import type {
 } from '../../../../shared/api.interface';
 import { useDemoAccount } from './use-demo-account';
 import { DemoSettings } from './DemoSettings';
+import { RelatedSidebar } from './RelatedSidebar';
+import { RelatedReading } from './RelatedReading';
+import { useRelatedTree, useRelatedVisibility } from './use-related-tree';
+import { useRelatedScroll } from './use-related-scroll';
+import { relatedRouteRequest } from '../../../../shared/related-tree';
 import './zhihu-demo.css';
+import './related-tree.css';
 
 const count = (n: number) =>
   n >= 10000 ? `${(n / 10000).toFixed(1)} 万` : n.toLocaleString('zh-CN');
@@ -69,13 +75,29 @@ export default function ZhihuDemoPage() {
   const [historyError, setHistoryError] = useState('');
   const isSettings = location.pathname.startsWith('/settings');
   const article = id ? DEMO_ARTICLES.find((item) => item.id === id) : undefined;
+  const current = article
+    ? { query: article.title }
+    : relatedRouteRequest(id, params.get('title'));
+  const { open: relatedOpen, setOpen: setRelatedOpen } = useRelatedVisibility(
+    JSON.stringify(current),
+  );
+  const related = useRelatedTree(current, relatedOpen);
+  useRelatedScroll();
+  const sidebar = current ? (
+    <RelatedSidebar
+      current={current}
+      state={related}
+      retry={related.retry}
+      open={relatedOpen}
+      setOpen={setRelatedOpen}
+    />
+  ) : null;
   const activeTab = params.get('tab') || 'recommend';
   const query = (params.get('q') || '').trim().toLowerCase();
   useEffect(() => {
-    document.title = `${isSettings ? '设置' : article?.title || '首页'} - 知乎界面演示`;
-    window.scrollTo(0, 0);
+    document.title = `${isSettings ? '设置' : article?.title || current?.query || '首页'} - 知乎界面演示`;
     setShowAll(false);
-  }, [location.pathname, article?.title, isSettings]);
+  }, [location.pathname, article?.title, current?.query, isSettings]);
   useEffect(() => {
     setHistoryError('');
     if (!article || !account?.userId || !account.preferences.recordHistory)
@@ -300,7 +322,7 @@ export default function ZhihuDemoPage() {
                 </div>
               </div>
             </section>
-            <main className="zd-columns zd-detail">
+            <main className="zd-columns zd-detail zd-related-detail">
               <div>
                 <div className="zd-all-answers zd-panel">
                   正在阅读 1 个示例回答{' '}
@@ -368,43 +390,55 @@ export default function ZhihuDemoPage() {
                     ))}
                 </div>
               </div>
-              <aside className="zd-sidebar">
-                <section className="zd-panel zd-about-author">
-                  <h3>关于作者</h3>
-                  <div className="zd-about-person">
-                    <AuthorAvatar item={article} large />
-                    <div>
-                      <strong>{article.author}</strong>
-                      <p>{article.bio}</p>
+              <aside className="zd-sidebar zd-related-sidebar">
+                {sidebar}
+                <details className="zd-panel zd-author-access">
+                  <summary>关于作者</summary>
+                  <section className="zd-panel zd-about-author">
+                    <h3>关于作者</h3>
+                    <div className="zd-about-person">
+                      <AuthorAvatar item={article} large />
+                      <div>
+                        <strong>{article.author}</strong>
+                        <p>{article.bio}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="zd-author-stats">
-                    <span>
-                      回答<b>1</b>
-                    </span>
-                    <span>
-                      文章<b>0</b>
-                    </span>
-                    <span>
-                      关注者<b>{article.followers}</b>
-                    </span>
-                  </div>
-                  <button
-                    className="zd-primary"
-                    disabled={busy}
-                    onClick={() => toggle('follow', article.id)}
-                  >
-                    <Plus size={18} />
-                    {has('follow', article.id)
-                      ? '已关注这个问题'
-                      : '关注这个问题'}
-                  </button>
-                </section>
+                    <div className="zd-author-stats">
+                      <span>
+                        回答<b>1</b>
+                      </span>
+                      <span>
+                        文章<b>0</b>
+                      </span>
+                      <span>
+                        关注者<b>{article.followers}</b>
+                      </span>
+                    </div>
+                    <button
+                      className="zd-primary"
+                      disabled={busy}
+                      onClick={() => toggle('follow', article.id)}
+                    >
+                      <Plus size={18} />
+                      {has('follow', article.id)
+                        ? '已关注这个问题'
+                        : '关注这个问题'}
+                    </button>
+                  </section>
+                </details>
                 <Trending />
                 <Footer />
               </aside>
             </main>
           </>
+        ) : current ? (
+          <RelatedReading
+            current={current}
+            title={params.get('title') || current.query}
+            question={related.knownQuestion}
+            state={related}
+            sidebar={sidebar}
+          />
         ) : (
           <main className="zd-panel zd-empty zd-not-found">
             <h1>这个内容不存在</h1>
